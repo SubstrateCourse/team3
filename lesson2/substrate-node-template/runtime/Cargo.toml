@@ -85,6 +85,12 @@ git = 'https://github.com/paritytech/substrate.git'
 tag = 'v2.0.0-rc2'
 version = '2.0.0-rc2'
 
+[dependencies.sp-std]
+default-features = false
+git = 'https://github.com/paritytech/substrate.git'
+tag = 'v2.0.0-rc2'
+version = '2.0.0-rc2'
+
 [dependencies.sp-inherents]
 default-features = false
 git = 'https://github.com/paritytech/substrate.git'
@@ -110,12 +116,6 @@ tag = 'v2.0.0-rc2'
 version = '2.0.0-rc2'
 
 [dependencies.sp-session]
-default-features = false
-git = 'https://github.com/paritytech/substrate.git'
-tag = 'v2.0.0-rc2'
-version = '2.0.0-rc2'
-
-[dependencies.sp-std]
 default-features = false
 git = 'https://github.com/paritytech/substrate.git'
 tag = 'v2.0.0-rc2'
@@ -151,6 +151,12 @@ version = '2.0.0-rc2'
 default-features = false
 package = 'pallet-template'
 path = '../pallets/template'
+version = '2.0.0-rc2'
+
+[dependencies.poe]
+default-features = false
+package = 'pallet-poe'
+path = '../pallets/poe'
 version = '2.0.0-rc2'
 
 [dependencies.timestamp]
@@ -195,6 +201,7 @@ std = [
     'timestamp/std',
     'transaction-payment/std',
     'template/std',
+    'poe/std',
 ]
 
 [build-dependencies.wasm-builder-runner]
