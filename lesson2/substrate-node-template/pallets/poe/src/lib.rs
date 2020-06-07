@@ -9,10 +9,9 @@
 /// For more guidance on Substrate FRAME, see the example pallet
 /// https://github.com/paritytech/substrate/blob/master/frame/example/src/lib.rs
 use frame_support::{
-    decl_error, decl_event, decl_module, decl_storage, dispatch, ensure, traits::Get,
+    decl_error, decl_event, decl_module, decl_storage, dispatch, ensure,
 };
 use frame_system::{self as system, ensure_signed};
-use sp_runtime::traits::StaticLookup;
 use sp_std::prelude::*;
 
 #[cfg(test)]
@@ -97,7 +96,7 @@ decl_module! {
 
             ensure!(Proofs::<T>::contains_key(&claim), Error::<T>::ClaimNotExist);
 
-            let(owner, block_number)=Proofs::<T>::get(&claim);
+            let(owner, _block_number)=Proofs::<T>::get(&claim);
 
             ensure!(owner==sender, Error::<T>::NotClaimOwner);
 
