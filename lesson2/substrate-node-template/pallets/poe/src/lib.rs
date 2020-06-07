@@ -13,10 +13,11 @@ use frame_support::{decl_module, decl_storage, decl_event, decl_error, dispatch,
 use frame_system::{self as system, ensure_signed};
 use sp_std::prelude::*;
 
-#[cfg(test)]
+// #[cfg(test)]
 // mod mock;
-#[cfg(test)]
+// #[cfg(test)]
 // mod tests;
+
 /// The pallet's configuration trait.
 pub trait Trait: system::Trait {
     // Add other types and constants required to configure this pallet.
@@ -78,7 +79,8 @@ decl_module! {
             let sender = ensure_signed(origin)?;
 			ensure!(!Proofs::<T>::contains_key(&claim), Error::<T>::ClaimAlreadyExist);
 
-			ensure!(&claim.len() <= 12, Error::<T>::ClaimTooLong);
+            let claim_limit: usize = 3;
+			ensure!(&claim.len() <= &claim_limit, Error::<T>::ClaimTooLong);
 
 			Proofs::<T>::insert(&claim, (&sender, system::Module::<T>::block_number()));
 			Self::deposit_event(RawEvent::ClaimCreated(sender, claim));

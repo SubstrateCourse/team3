@@ -201,6 +201,7 @@ std = [
     'timestamp/std',
     'transaction-payment/std',
     'template/std',
+    'poe/std',
 ]
 
 [build-dependencies.wasm-builder-runner]
