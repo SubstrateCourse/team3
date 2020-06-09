@@ -2,7 +2,7 @@
 
 课程里会给出参考资料，大家一定要自己敲一遍**代码**！
 
-注：
+注：`
 
 1. 下面的题目，都需要提交源代码，程序运行的命令行截图，前端apps 发送对应交易的截图；
 2. 可以尝试别的数据类型，功能满足即可；
@@ -14,13 +14,48 @@
 * 创建存证，可调用函数所接收参数为内容的哈希值 Vec<u8>；
 * 撤销存证，可调用函数所接收参数为内容的哈希值 Vec<u8>。
 
+```bash
+./target/release/node-template purge-chain --dev
+./target/release/node-template --dev
+```
+![image](./images/0.png)
+
+Get 0x01
+![image](./images/1.png)
+
+CreateClaim by Alice
+![image](./images/2.png)
+
+Get 0x01
+![image](./images/3.png)
+
+Revoke notExist Claim
+![image](./images/4.png)
+
+Revoke by Non-Owner Error
+![image](./images/5.png)
+
+Revoke by Alice Ok
+![image](./images/6.png)
+
+
 **第二题：为存证模块添加新的功能，**
 
 * 转移存证，接收两个参数，一个是内容的哈希值，另一个是存证的接收账户地址；当存证不存在或者发送请求的用户不是存证内容的拥有人时，返回错误；当所有的检查通过后，更新对应的存证记录，并触发一个事件。
 
+
+Create 0x02
+![image](./images/7.png)
+
+Transfer Owner
+![image](./images/8.png)
+
+Check Owner
+![image](./images/9.png)
 **第三题（附加题）：**
 
 * 创建存证时，为存证内容的哈希值设置界限，如果超出界限，返回错误。
+To do.....
 
 ### 参考资料
 
