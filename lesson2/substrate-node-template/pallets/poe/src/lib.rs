@@ -45,12 +45,10 @@ decl_storage! {
 decl_event!(
     pub enum Event<T>
     where
-        AccountId = <T as system::Trait>::AccountId,
-        AccountIdDest = <T as system::Trait>::AccountId,
-    {
+        AccountId = <T as system::Trait>::AccountId    {
         ClaimCreated(AccountId, Vec<u8>),
         ClaimRevoked(AccountId, Vec<u8>),
-        ClaimTransfered(AccountId, AccountIdDest, Vec<u8>),
+        ClaimTransfered(AccountId, Vec<u8>),
     }
 );
 
@@ -117,7 +115,7 @@ decl_module! {
 
             Proofs::<T>::insert(&claim, (dest.clone(), system::Module::<T>::block_number()));
 
-            Self::deposit_event(RawEvent::ClaimTransfered(sender,dest, claim));
+            Self::deposit_event(RawEvent::ClaimTransfered(dest, claim));
 
             Ok(())
         }
