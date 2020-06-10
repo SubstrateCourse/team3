@@ -259,8 +259,14 @@ impl template::Trait for Runtime {
     type Event = Event;
 }
 
+parameter_types! {
+    pub const ValidClaimLen: u32 = 8;
+}
+
 impl poe::Trait for Runtime {
     type Event = Event;
+
+    type ValidClaimLen = ValidClaimLen;
 }
 
 construct_runtime!(

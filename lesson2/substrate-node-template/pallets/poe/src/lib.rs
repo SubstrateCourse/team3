@@ -1,8 +1,11 @@
 #![cfg_attr(not(feature = "std"), no_std)]
 
 /// A FRAME pallet template with necessary imports
-use frame_support::{decl_error, decl_event, decl_module, decl_storage, dispatch, ensure};
+use frame_support::{
+    decl_error, decl_event, decl_module, decl_storage, dispatch, ensure, traits::Get,
+};
 use frame_system::{self as system, ensure_signed};
+use sp_runtime::traits::StaticLookup;
 use sp_std::prelude::*;
 
 #[cfg(test)]
@@ -17,6 +20,8 @@ pub trait Trait: system::Trait {
 
     /// The overarching event type.
     type Event: From<Event<Self>> + Into<<Self as system::Trait>::Event>;
+
+    type ValidClaimLen: Get<u32>;
 }
 
 // This pallet's storage items.
@@ -72,7 +77,7 @@ decl_module! {
 
             //创建存证时，为存证内容的哈希值设置界限
             let claim_len =  claim.len() as u32;
-            ensure!(claim_len > 0 && claim_len == 8u32,  Error::<T>::NotValidClaimLen);
+            ensure!(claim_len > 0 && claim_len == T::ValidClaimLen::get(),  Error::<T>::NotValidClaimLen);
 
             Proofs::<T>::insert(&claim, (sender.clone(), system::Module::<T>::block_number()));
 
@@ -99,7 +104,7 @@ decl_module! {
         }
 
         #[weight = 0]
-        pub fn transfer_claim(origin, claim: Vec<u8>, to: T::AccountId) -> dispatch::DispatchResult {
+        pub fn transfer_claim(origin, claim: Vec<u8>, to: <T::Lookup as StaticLookup>::Source) -> dispatch::DispatchResult {
             let sender = ensure_signed(origin)?;
 
             ensure!(Proofs::<T>::contains_key(&claim), Error::<T>::ClaimNotExist);
@@ -107,7 +112,7 @@ decl_module! {
             let (owner, _) = Proofs::<T>::get(&claim);
             ensure!(owner == sender, Error::<T>::NotClaimOwner);
 
-            Proofs::<T>::remove(&claim);
+            let to = T::Lookup::lookup(to)?;
             Proofs::<T>::insert(&claim, (to.clone(), system::Module::<T>::block_number()));
 
             Self::deposit_event(RawEvent::ClaimTransfered(sender, claim, to));
