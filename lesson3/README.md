@@ -35,8 +35,14 @@
 第二题：编写存证模块的UI，包括
 
 * 创建存证的UI
+
+![create_claim_UI_demo](./create_claim_UI_demo.png)
 * 删除存证的UI
+
+![revoke_claim_UI_demo](./revoke_claim_UI_demo.png)
 * 转移存证的UI
+
+![Transfer_claim_UI_demo](./Transfer_claim_UI_demo.png)
 
 第三题（附加题）：实现购买存证的功能代码：
 
