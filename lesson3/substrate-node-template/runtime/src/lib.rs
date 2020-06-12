@@ -261,7 +261,7 @@ impl template::Trait for Runtime {
 
 // 附加题答案
 parameter_types! {
-    pub const MaxClaimLength: u32 = 256;
+    pub const MaxClaimLength: u32 = 200;
 }
 
 impl poe::Trait for Runtime {

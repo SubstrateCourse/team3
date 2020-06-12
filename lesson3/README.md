@@ -46,6 +46,18 @@
 
 第三题（附加题）：实现购买存证的功能代码：
 
+测试结果
+![Test_claim_demo](./Test_claim_demo.png)
+
 * 用户A为自己的某个存证记录设置价格；
+设置价格代码
+![buy_claim_code](./buy_claim_code.png)
+演示
+![create_claim_price_demo](./create_claim_price_demo.png)
+
 * 用户B可以以一定的价格购买某个存证，当出价高于用户A设置的价格时，则以用户A设定的价格将费用从用户B转移到用户A，再将该存证进行转移。如果出价低于用户A的价格时，则不进行转移，返回错误。
 
+![buy_claim_demo](./buy_claim_demo.png)
+![b_buy_a_yes](./b_buy_a_yes.png)
+出价低于设置价格演示，返回错误
+![buy_claim_err](./buy_claim_err.png)
