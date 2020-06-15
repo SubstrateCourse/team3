@@ -149,8 +149,8 @@ version = '2.0.0-rc2'
 
 [dependencies.template]
 default-features = false
-package = 'pallet-template'
-path = '../pallets/template'
+package = 'miluroe-attestation'
+path = '../pallets/miluroe-attestation'
 version = '2.0.0-rc2'
 
 [dependencies.timestamp]
