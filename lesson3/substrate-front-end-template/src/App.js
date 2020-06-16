@@ -12,73 +12,77 @@ import Events from './Events';
 import Interactor from './Interactor';
 import Metadata from './Metadata';
 import NodeInfo from './NodeInfo';
+import PoeModule from './PoeModule';
 import TemplateModule from './TemplateModule';
 import Transfer from './Transfer';
 import Upgrade from './Upgrade';
 
-function Main () {
-  const [accountAddress, setAccountAddress] = useState(null);
-  const { apiState, keyring, keyringState } = useSubstrate();
-  const accountPair =
-    accountAddress &&
-    keyringState === 'READY' &&
-    keyring.getPair(accountAddress);
+function Main() {
+    const [accountAddress, setAccountAddress] = useState(null);
+    const { apiState, keyring, keyringState } = useSubstrate();
+    const accountPair =
+        accountAddress &&
+        keyringState === 'READY' &&
+        keyring.getPair(accountAddress);
 
-  const loader = text => (
-    <Dimmer active>
-      <Loader size='small'>{text}</Loader>
-    </Dimmer>
-  );
-
-  if (apiState === 'ERROR') return loader('Error connecting to the blockchain');
-  else if (apiState !== 'READY') return loader('Connecting to the blockchain');
-
-  if (keyringState !== 'READY') {
-    return loader(
-      "Loading accounts (please review any extension's authorization)"
+    const loader = text => (
+        <Dimmer active>
+            <Loader size='small'>{text}</Loader>
+        </Dimmer>
     );
-  }
 
-  const contextRef = createRef();
+    if (apiState === 'ERROR') return loader('Error connecting to the blockchain');
+    else if (apiState !== 'READY') return loader('Connecting to the blockchain');
 
-  return (
-    <div ref={contextRef}>
-      <Sticky context={contextRef}>
-        <AccountSelector setAccountAddress={setAccountAddress} />
-      </Sticky>
-      <Container>
-        <Grid stackable columns='equal'>
-          <Grid.Row stretched>
-            <NodeInfo />
-            <Metadata />
-            <BlockNumber />
-            <BlockNumber finalized />
-          </Grid.Row>
-          <Grid.Row stretched>
-            <Balances />
-          </Grid.Row>
-          <Grid.Row>
-            <Transfer accountPair={accountPair} />
-            <Upgrade accountPair={accountPair} />
-          </Grid.Row>
-          <Grid.Row>
-            <Interactor accountPair={accountPair} />
-            <Events />
-          </Grid.Row>
-          <Grid.Row>
-            <TemplateModule accountPair={accountPair} />
-          </Grid.Row>
-        </Grid>
-        <DeveloperConsole />
-      </Container>
-    </div>
-  );
+    if (keyringState !== 'READY') {
+        return loader(
+            "Loading accounts (please review any extension's authorization)"
+        );
+    }
+
+    const contextRef = createRef();
+
+    return (
+        <div ref={contextRef}>
+            <Sticky context={contextRef}>
+                <AccountSelector setAccountAddress={setAccountAddress} />
+            </Sticky>
+            <Container>
+                <Grid stackable columns='equal'>
+                    <Grid.Row stretched>
+                        <NodeInfo />
+                        <Metadata />
+                        <BlockNumber />
+                        <BlockNumber finalized />
+                    </Grid.Row>
+                    <Grid.Row stretched>
+                        <Balances />
+                    </Grid.Row>
+                    <Grid.Row>
+                        <Transfer accountPair={accountPair} />
+                        <Upgrade accountPair={accountPair} />
+                    </Grid.Row>
+                    <Grid.Row>
+                        <Interactor accountPair={accountPair} />
+                        <Events />
+                    </Grid.Row>
+                    <Grid.Row>
+                        <TemplateModule accountPair={accountPair} />
+                    </Grid.Row>
+                    <Grid.Row>
+                        <PoeModule accountPair={accountPair} />
+                    </Grid.Row>
+                </Grid>
+                <DeveloperConsole />
+            </Container>
+        </div>
+    );
 }
 
-export default function App () {
-  return (
-    <SubstrateContextProvider>
-      <Main />
-    </SubstrateContextProvider>
-  );
+export default function App() {
+    return (
+        <SubstrateContextProvider>
+            <Main />
+        </SubstrateContextProvider>
+    );
 }
