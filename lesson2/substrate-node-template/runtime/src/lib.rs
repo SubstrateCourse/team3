@@ -200,7 +200,7 @@ impl grandpa::Trait for Runtime {
 	type KeyOwnerProofSystem = ();
 
 	type KeyOwnerProof =
-		<Self::KeyOwnerProofSystem as KeyOwnerProofSystem<(KeyTypeId, GrandpaId)>>::Proof;
+	<Self::KeyOwnerProofSystem as KeyOwnerProofSystem<(KeyTypeId, GrandpaId)>>::Proof;
 
 	type KeyOwnerIdentification = <Self::KeyOwnerProofSystem as KeyOwnerProofSystem<(
 		KeyTypeId,
@@ -257,6 +257,18 @@ impl template::Trait for Runtime {
 	type Event = Event;
 }
 
+// 附加题答案
+parameter_types! {
+	pub const MaxClaimLength: u32 = 256;
+}
+
+impl poe::Trait for Runtime {
+	type Event = Event;
+
+	// 附加题答案
+	type MaxClaimLength = MaxClaimLength;
+}
+
 construct_runtime!(
 	pub enum Runtime where
 		Block = Block,
@@ -273,6 +285,7 @@ construct_runtime!(
 		Sudo: sudo::{Module, Call, Config<T>, Storage, Event<T>},
 		// Used for the module template in `./template.rs`
 		TemplateModule: template::{Module, Call, Storage, Event<T>},
+		PoeModule: poe::{Module, Call, Storage, Event<T>},
 	}
 );
 
