@@ -12,11 +12,12 @@ import Events from './Events';
 import Interactor from './Interactor';
 import Metadata from './Metadata';
 import NodeInfo from './NodeInfo';
-import TemplateModule from './TemplateModule';
+//import TemplateModule from './TemplateModule';
 import Transfer from './Transfer';
 import Upgrade from './Upgrade';
+import PoeModule from './PoeModule';
 
-function Main () {
+function Main() {
   const [accountAddress, setAccountAddress] = useState(null);
   const { apiState, keyring, keyringState } = useSubstrate();
   const accountPair =
@@ -66,7 +67,7 @@ function Main () {
             <Events />
           </Grid.Row>
           <Grid.Row>
-            <TemplateModule accountPair={accountPair} />
+            <PoeModule accountPair={accountPair} />
           </Grid.Row>
         </Grid>
         <DeveloperConsole />
@@ -75,7 +76,7 @@ function Main () {
   );
 }
 
-export default function App () {
+export default function App() {
   return (
     <SubstrateContextProvider>
       <Main />
