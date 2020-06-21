@@ -15,6 +15,15 @@ function submitDocInfo(filePath, comment) {
   // 把 filePath 档档案通过 hash 函数算出它的 hash 值。然后用 Polkadot-JS API 提交个个 extrinsics 到 Substrate
 }
 ```
+结果： 
+![image](./images/web_ui_poe_hash_list_1.png)
+
+js api上传文件hash信息以及comment ok 
+![image](./images/js_api_submit_ok.png)
+
+js api根据account取回信息仍有问题没解决，“Connect to Substrate error: TypeError: Cannot read property 'poeModule' of undefined”
+![image](./images/js_api_get_failed.png)
+
 
 附加题：这一题需要改动 前端 **及 Substrate 节点** 的代码。现在也加一个功能，允许前端输入一个 AccountID，遍历显示属于该用户的文件 hash, 其创建日期，及其备注
 
