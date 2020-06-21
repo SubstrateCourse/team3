@@ -25,6 +25,7 @@ pub trait Trait: system::Trait {
 
 	// 附加题答案
 	type MaxClaimLength: Get<u32>;
+	type NoteClaimLength: Get<u32>;
 }
 
 // This pallet's storage items.
@@ -33,7 +34,8 @@ decl_storage! {
 	// storage items are isolated from other pallets.
 	// ---------------------------------vvvvvvvvvvvvvv
 	trait Store for Module<T: Trait> as TemplateModule {
-		Proofs get(fn proofs): map hasher(blake2_128_concat) Vec<u8> => (T::AccountId, T::BlockNumber);
+		Proofs get(fn proofs): map hasher(blake2_128_concat) Vec<u8> => (T::AccountId, T::BlockNumber, Vec<u8>);
+		Account2ProofHashList get(fn account2_proof_hash_list): map hasher(identity) T::AccountId => Vec<Vec<u8>>;
 	}
 }
 
@@ -52,6 +54,7 @@ decl_error! {
 		ClaimNotExist,
 		NotClaimOwner,
 		ProofTooLong,
+		NoteTooLong,
 	}
 }
 
@@ -69,15 +72,28 @@ decl_module! {
 		fn deposit_event() = default;
 
 		#[weight = 1000000]
-		pub fn create_claim(origin, claim: Vec<u8>) -> dispatch::DispatchResult {
+		pub fn create_claim(origin, claim: Vec<u8>, note: Vec<u8>) -> dispatch::DispatchResult {
 			let sender = ensure_signed(origin)?;
 
 			ensure!(!Proofs::<T>::contains_key(&claim), Error::<T>::ProofAlreadyExist);
 
 			// 附加题答案
 			ensure!(T::MaxClaimLength::get() >= claim.len() as u32, Error::<T>::ProofTooLong);
+			ensure!(T::NoteClaimLength::get() >= claim.len() as u32, Error::<T>::NoteTooLong);
 
-			Proofs::<T>::insert(&claim, (sender.clone(), system::Module::<T>::block_number()));
+			Proofs::<T>::insert(&claim, (sender.clone(), system::Module::<T>::block_number(), &note));
+			if Account2ProofHashList::<T>::contains_key(&sender) {
+				let mut vec = Account2ProofHashList::<T>::get(&sender);
+				match vec.binary_search(&claim) {
+					Ok(_) => (),
+					Err(index) => vec.insert(index, claim.clone())
+				};
+				Account2ProofHashList::<T>::insert(&sender, vec);
+			} else {
+				let mut vec = Vec::<Vec<u8>>::new();
+				vec.push(claim.clone());
+				Account2ProofHashList::<T>::insert(&sender, vec);
+			}
 
 			Self::deposit_event(RawEvent::ClaimCreated(sender, claim));
 
@@ -90,11 +106,20 @@ decl_module! {
 
 			ensure!(Proofs::<T>::contains_key(&claim), Error::<T>::ClaimNotExist);
 
-			let (owner, _block_number) = Proofs::<T>::get(&claim);
+			let (owner, _block_number, _) = Proofs::<T>::get(&claim);
 
 			ensure!(owner == sender, Error::<T>::NotClaimOwner);
 
 			Proofs::<T>::remove(&claim);
+			if Account2ProofHashList::<T>::contains_key(&sender) {
+				let mut vec = Account2ProofHashList::<T>::get(&sender);
+
+				match vec.binary_search(&claim) {
+					Ok(index) => vec.remove(index),
+					Err(_) => [0].to_vec()
+				};
+				Account2ProofHashList::<T>::insert(&sender, vec);
+			}
 
 			Self::deposit_event(RawEvent::ClaimRevoked(sender, claim));
 
@@ -108,13 +133,35 @@ decl_module! {
 
 			ensure!(Proofs::<T>::contains_key(&claim), Error::<T>::ClaimNotExist);
 
-			let (owner, _block_number) = Proofs::<T>::get(&claim);
+			let (owner, _block_number, note) = Proofs::<T>::get(&claim);
 
 			ensure!(owner == sender, Error::<T>::NotClaimOwner);
 
 			let dest = T::Lookup::lookup(dest)?;
 
-			Proofs::<T>::insert(&claim, (dest, system::Module::<T>::block_number()));
+			Proofs::<T>::insert(&claim, (dest, system::Module::<T>::block_number(), note));
+			if Account2ProofHashList::<T>::contains_key(&owner) {
+				let mut vec = Account2ProofHashList::<T>::get(&owner);
+
+				match vec.binary_search(&claim) {
+					Ok(index) => vec.remove(index),
+					Err(_) => [0].to_vec()
+				};
+				Account2ProofHashList::<T>::insert(&owner, vec);
+			}
+
+			if Account2ProofHashList::<T>::contains_key(&sender) {
+				let mut vec = Account2ProofHashList::<T>::get(&sender);
+				match vec.binary_search(&claim) {
+					Ok(_) => (),
+					Err(index) => vec.insert(index, claim.clone())
+				};
+				Account2ProofHashList::<T>::insert(&sender, vec);
+			} else {
+				let mut vec = Vec::<Vec<u8>>::new();
+				vec.push(claim.clone());
+				Account2ProofHashList::<T>::insert(&sender, vec);
+			}
 
 			Ok(())
 		}
