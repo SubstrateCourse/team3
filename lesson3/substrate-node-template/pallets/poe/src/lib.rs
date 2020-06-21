@@ -79,7 +79,7 @@ decl_module! {
 
             //创建存证时，为存证内容的哈希值设置界限
             let _claim_len =  claim.len() as u32;
-            //ensure!(_claim_len >= T::ValidClaimLen::get(),  Error::<T>::NotValidClaimLen);
+            ensure!(_claim_len >= T::ValidClaimLen::get(),  Error::<T>::NotValidClaimLen);
 
             Proofs::<T>::insert(&claim, (sender.clone(), system::Module::<T>::block_number(), price));
 
