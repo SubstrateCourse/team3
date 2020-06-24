@@ -53,7 +53,6 @@ decl_error! {
         ClaimNotExist,
         NotClaimOwner,
         NotValidClaimLen,
-        NotEnoughPrice,
     }
 }
 
@@ -77,8 +76,8 @@ decl_module! {
             ensure!(!Proofs::<T>::contains_key(&claim), Error::<T>::ProofAlreadyExist);
 
             //创建存证时，为存证内容的哈希值设置界限
-            let _claim_len =  claim.len() as u32;
-            //ensure!(_claim_len >= T::ValidClaimLen::get(),  Error::<T>::NotValidClaimLen);
+            let claim_len =  claim.len() as u32;
+            //ensure!(claim_len >= T::ValidClaimLen::get(),  Error::<T>::NotValidClaimLen);
 
             Proofs::<T>::insert(&claim, (sender.clone(), system::Module::<T>::block_number()));
 
