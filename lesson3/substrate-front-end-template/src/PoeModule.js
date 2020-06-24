@@ -23,7 +23,7 @@ function Main(props) {
 
   useEffect(() => {
     let unsubscribe;
-    api.query.templateModule.something(digest, (result) => {
+    api.query.PoeModule.proofs(digest, (result) => {
       setOwner(result[0].toString());
       setBlockNumber(result[1].toNumber());
     }).then(unsub => {
