@@ -70,14 +70,14 @@ decl_module! {
         fn deposit_event() = default;
 
         #[weight = 0]
-        pub fn create_claim(origin, claim: Vec<u8>, price: u32) -> dispatch::DispatchResult {
+        pub fn create_claim(origin, claim: Vec<u8>) -> dispatch::DispatchResult {
             let sender = ensure_signed(origin)?;
 
             ensure!(!Proofs::<T>::contains_key(&claim), Error::<T>::ProofAlreadyExist);
 
             //创建存证时，为存证内容的哈希值设置界限
             let claim_len =  claim.len() as u32;
-            ensure!(claim_len >= T::ValidClaimLen::get(),  Error::<T>::NotValidClaimLen);
+            //ensure!(claim_len >= T::ValidClaimLen::get(),  Error::<T>::NotValidClaimLen);
 
             Proofs::<T>::insert(&claim, (sender.clone(), system::Module::<T>::block_number()));
 
