@@ -252,35 +252,6 @@ function Main(props) {
             }
           />
 
-          <TxButton
-            accountPair={accountPair}
-            label='Attach Claim Price'
-            setStatus={setStatus}
-            type='SIGNED-TX'
-            attrs={
-              {
-                palletRpc: 'poeModule',
-                callable: 'attachClaimPrice',
-                inputParams: [digest, amount],
-                paramFields: [true, true]
-              }
-            }
-          />
-
-          <TxButton
-            accountPair={accountPair}
-            label='Buy Claim'
-            setStatus={setStatus}
-            type='SIGNED-TX'
-            attrs={
-              {
-                palletRpc: 'poeModule',
-                callable: 'buyClaim',
-                inputParams: [digest, amount],
-                paramFields: [true, true]
-              }
-            }
-          />
         </Form.Field>
 
         {showingNotification && <SuccessNotification digest={digest} note={note} />}
