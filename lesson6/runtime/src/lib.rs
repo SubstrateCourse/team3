@@ -200,7 +200,7 @@ impl grandpa::Trait for Runtime {
 	type KeyOwnerProofSystem = ();
 
 	type KeyOwnerProof =
-		<Self::KeyOwnerProofSystem as KeyOwnerProofSystem<(KeyTypeId, GrandpaId)>>::Proof;
+	<Self::KeyOwnerProofSystem as KeyOwnerProofSystem<(KeyTypeId, GrandpaId)>>::Proof;
 
 	type KeyOwnerIdentification = <Self::KeyOwnerProofSystem as KeyOwnerProofSystem<(
 		KeyTypeId,
@@ -258,7 +258,7 @@ impl template::Trait for Runtime {
 }
 
 impl pallet_kitties::Trait for Runtime {
-	type KittyIndex = u32;
+	type KittyId = u32;
 }
 
 construct_runtime!(
