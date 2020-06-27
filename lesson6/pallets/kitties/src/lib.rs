@@ -29,7 +29,7 @@ decl_storage! {
 
 		/// Store owned kitties in a linked list.
 		pub OwnedKitties get(fn owned_kitties): map hasher(blake2_128_concat) (T::AccountId, Option<T::KittyIndex>) => Option<KittyLinkedItem<T>>;
-
+		pub OwnedKittiesCount get(fn owned_kitties_count): map hasher(blake2_128_concat) T::AccountId => u32;
 	}
 }
 
@@ -39,6 +39,7 @@ decl_error! {
 		InvalidKittyId,
 		RequireDifferentParent,
 		RequireOwner,
+		CouldNotSelfSend,
 	}
 }
 
@@ -64,7 +65,6 @@ decl_module! {
 		#[weight = 0]
 		pub fn breed(origin, kitty_id_1: T::KittyIndex, kitty_id_2: T::KittyIndex) {
 			let sender = ensure_signed(origin)?;
-
 			Self::do_breed(&sender, kitty_id_1, kitty_id_2)?;
 		}
 
@@ -72,6 +72,11 @@ decl_module! {
 		#[weight = 0]
 		pub fn transfer(origin, to: T::AccountId, kitty_id: T::KittyIndex) {
 			// 作业
+			let sender = ensure_signed(origin)?;
+			ensure!(sender != to, Error::<T>::CouldNotSelfSend);
+
+
+			Self::do_transfer(&sender, to, kitty_id);
 		}
 	}
 }
@@ -164,6 +169,18 @@ impl<T: Trait> Module<T> {
 
 	fn insert_owned_kitty(owner: &T::AccountId, kitty_id: T::KittyIndex) {
 		// 作业
+
+		let user_kitties_id = Self::owned_kitties_count(&owner);
+		<OwnedKitties<T>>::append(&owner, kitty_id);
+		<OwnedKittiesCount<T>>::insert(owner, user_kitties_id+1);
+
+	}
+
+	fn do_transfer(sender: &T::AccountId, to: T::AccountId, kitty_id: T::KittyIndex){
+		if let Some(item) = <OwnedKitties<T>>::take((&sender, Some(kitty_id))){
+			<OwnedKitties<T>>::remove(&sender, kitty_id);
+			<OwnedKitties<T>>::append(&to, kitty_id);
+		}
 	}
 
 	fn insert_kitty(owner: &T::AccountId, kitty_id: T::KittyIndex, kitty: Kitty) {
