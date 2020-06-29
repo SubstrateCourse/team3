@@ -104,7 +104,7 @@ pub const VERSION: RuntimeVersion = RuntimeVersion {
 	transaction_version: 1,
 };
 
-pub const MILLISECS_PER_BLOCK: u64 = 6000;
+pub const MILLISECS_PER_BLOCK: u64 = 2000;
 
 pub const SLOT_DURATION: u64 = MILLISECS_PER_BLOCK;
 
@@ -257,8 +257,7 @@ impl template::Trait for Runtime {
 	type Event = Event;
 }
 
-impl poe::Trait for Runtime {
-	type Event = Event;
+impl pallet_kitties::Trait for Runtime {
 }
 
 construct_runtime!(
@@ -277,7 +276,8 @@ construct_runtime!(
 		Sudo: sudo::{Module, Call, Config<T>, Storage, Event<T>},
 		// Used for the module template in `./template.rs`
 		TemplateModule: template::{Module, Call, Storage, Event<T>},
-		PoeModule: poe::{Module, Call, Storage, Event<T>},
+		// Substrate Kitties module
+		Kitties: pallet_kitties::{Module, Storage, Call},
 	}
 );
 
