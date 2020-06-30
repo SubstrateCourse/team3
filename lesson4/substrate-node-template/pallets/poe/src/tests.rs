@@ -1,6 +1,6 @@
-use crate::{Error, mock::*};
-use frame_support::{assert_ok, assert_noop};
 use super::*;
+use crate::{mock::*, Error};
+use frame_support::{assert_noop, assert_ok};
 
 #[test]
 fn create_claim_works() {
@@ -28,7 +28,6 @@ fn create_claim_already_exist() {
     })
 }
 
-
 #[test]
 fn create_claim_is_too_long() {
     new_test_ext().execute_with(|| {
@@ -40,7 +39,6 @@ fn create_claim_is_too_long() {
         );
     })
 }
-
 
 #[test]
 fn revoke_claim_works() {
@@ -58,10 +56,9 @@ fn revoke_claim_not_exist() {
         assert_noop!(
             PoeModule::revoke_claim(Origin::signed(1), claim.clone()),
             Error::<Test>::ClaimNotExist
-         );
+        );
     })
 }
-
 
 #[test]
 fn revoke_claim_not_owner() {
@@ -70,9 +67,9 @@ fn revoke_claim_not_owner() {
         let _ = PoeModule::create_claim(Origin::signed(1), claim.clone());
 
         assert_noop!(
-      PoeModule::revoke_claim(Origin::signed(2), claim.clone()),
-      Error::<Test>::NotClaimOwner
-    );
+            PoeModule::revoke_claim(Origin::signed(2), claim.clone()),
+            Error::<Test>::NotClaimOwner
+        );
     })
 }
 
@@ -82,12 +79,13 @@ fn transfer_claim_works() {
         let claim = vec![0, 1];
         let _ = PoeModule::create_claim(Origin::signed(1), claim.clone());
 
-        assert_ok!(
-          PoeModule::transfer_claim(Origin::signed(1),claim.clone(), 2)
-        );
+        assert_ok!(PoeModule::transfer_claim(
+            Origin::signed(1),
+            claim.clone(),
+            2
+        ));
     })
 }
-
 
 #[test]
 fn transfer_claim_is_not_exist() {
@@ -95,8 +93,8 @@ fn transfer_claim_is_not_exist() {
         let claim = vec![0, 1];
 
         assert_noop!(
-          PoeModule::transfer_claim(Origin::signed(1),claim.clone(), 2),
-          Error::<Test>::ClaimNotExist
+            PoeModule::transfer_claim(Origin::signed(1), claim.clone(), 2),
+            Error::<Test>::ClaimNotExist
         );
     })
 }
@@ -108,8 +106,8 @@ fn transfer_claim_is_not_owner() {
         let _ = PoeModule::create_claim(Origin::signed(1), claim.clone());
 
         assert_noop!(
-          PoeModule::transfer_claim(Origin::signed(2),claim.clone(), 3),
-          Error::<Test>::NotClaimOwner
+            PoeModule::transfer_claim(Origin::signed(2), claim.clone(), 3),
+            Error::<Test>::NotClaimOwner
         );
     })
 }
