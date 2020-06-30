@@ -9,27 +9,32 @@ use sp_runtime::{DispatchError, DispatchResult, traits::{AtLeast32Bit, Bounded, 
 #[derive(Encode, Decode)]
 pub struct Kitty(pub [u8; 16]);
 
-#[cfg_attr(feature = "std", derive(Debug, PartialEq, Eq))]
+// feature指定生效环境 测试环境才会用到定义在std下，derive约束打印、比较特征，链上资源宝贵减小wasm环境大小
+#[cfg_attr(feature = "std", derive(Debug, PartialEq,Eq))]
 #[derive(Encode, Decode)]
 pub struct KittyLinkedItem<T: Trait> {
-	pub prev: Option<T::KittyIndex>,
-	pub next: Option<T::KittyIndex>,
+  pub prev: Option<T::KittyId>,
+  pub next: Option<T::KittyId>,
 }
-
 pub trait Trait: frame_system::Trait {
-	type KittyIndex: Parameter + Member + AtLeast32Bit + Bounded + Default + Copy;
+	// 定义小猫ID 使用的时候指定类型;加上限定类型 Member代表该类型可以放到结构体或者枚举中使用
+	type KittyId: Parameter + Member + AtLeast32Bit + Bounded + Default + Copy;
 }
 
 decl_storage! {
 	trait Store for Module<T: Trait> as Kitties {
 		/// Stores all the kitties, key is the kitty id / index
-		pub Kitties get(fn kitties): map hasher(blake2_128_concat) T::KittyIndex => Option<Kitty>;
+		pub Kitties get(fn kitties): map hasher(blake2_128_concat) T::KittyId => Option<Kitty>;
 		/// Stores the total number of kitties. i.e. the next kitty index
-		pub KittiesCount get(fn kitties_count): T::KittyIndex;
+		pub KittiesCount get(fn kitties_count): T::KittyId;
 
-		/// Store owned kitties in a linked list.
-		pub OwnedKitties get(fn owned_kitties): map hasher(blake2_128_concat) (T::AccountId, Option<T::KittyIndex>) => Option<KittyLinkedItem<T>>;
-
+		// /// Get kitty ID by account ID and user kitty index
+		// pub OwnedKitties get(fn owned_kitties): map hasher(blake2_128_concat) (T::AccountId, T::KittyId) => T::KittyId;
+		// /// Get number of kitties by account ID
+		// pub OwnedKittiesCount get(fn owned_kitties_count): map hasher(blake2_128_concat) T::AccountId => T::KittyId;
+		 // 用户小猫相关数据使用自定义的链表数据结构保存
+		 pub OwnedKitties get(fn owned_kitties): map hasher(blake2_128_concat) (T::AccountId,Option<T::KittyId>) => Option<KittyLinkedItem<T>>;
+	
 	}
 }
 
@@ -50,28 +55,39 @@ decl_module! {
 		#[weight = 0]
 		pub fn create(origin) {
 			let sender = ensure_signed(origin)?;
-			let kitty_id = Self::next_kitty_id()?;
-
-			// Generate a random 128bit value
+			// 生成新猫ID
+			let new_kitty_id = Self::next_kitty_id()?;
+          
+			// Generate a random 128bit value 生成新猫DNA
 			let dna = Self::random_value(&sender);
+			
+		 	// Create and store kitty 生成新猫
+			let new_kitty = Kitty(dna);
 
-			// Create and store kitty
-			let kitty = Kitty(dna);
-			Self::insert_kitty(&sender, kitty_id, kitty);
+            // 新猫信息存储
+            Self::insert_kitty(&sender, new_kitty_id, new_kitty);
+			
 		}
-
-		/// Breed kitties
+  
+		/// Breed kitties  繁殖小猫
 		#[weight = 0]
-		pub fn breed(origin, kitty_id_1: T::KittyIndex, kitty_id_2: T::KittyIndex) {
+		pub fn breed(origin, kitty_id_1: T::KittyId, kitty_id_2: T::KittyId) {
 			let sender = ensure_signed(origin)?;
 
 			Self::do_breed(&sender, kitty_id_1, kitty_id_2)?;
 		}
-
-		/// Transfer a kitty to new owner
+		// transfer kitty to another
 		#[weight = 0]
-		pub fn transfer(origin, to: T::AccountId, kitty_id: T::KittyIndex) {
-			// 作业
+		pub fn transfer(origin, to: T::AccountId,kitty_id: T::KittyId){
+			// 小猫转移
+			let sender = ensure_signed(origin)?; 
+			if let Some(item) = <OwnedKitties<T>>::take((&sender,Some(kitty_id))) {
+				ensure!(item.prev != None || item.next != None,<Error<T>>::RequireOwner);
+		    }
+			// 将数据添加到新主人数据中
+			<OwnedKitties<T>>::append(&to,kitty_id);
+			// 从原主人数据中移除掉
+			<OwnedKitties<T>>::remove(&sender,kitty_id);	
 		}
 	}
 }
@@ -85,18 +101,18 @@ impl<T: Trait> OwnedKitties<T> {
 		Self::write(account, None, item);
 	}
 
-	fn read(account: &T::AccountId, key: Option<T::KittyIndex>) -> KittyLinkedItem<T> {
+	fn read(account: &T::AccountId, key: Option<T::KittyId>) -> KittyLinkedItem<T> {
 		<OwnedKitties<T>>::get((&account, key)).unwrap_or_else(|| KittyLinkedItem {
 			prev: None,
 			next: None,
 		})
 	}
 
-	fn write(account: &T::AccountId, key: Option<T::KittyIndex>, item: KittyLinkedItem<T>) {
+	fn write(account: &T::AccountId, key: Option<T::KittyId>, item: KittyLinkedItem<T>) {
 		<OwnedKitties<T>>::insert((&account, key), item);
 	}
 
-	pub fn append(account: &T::AccountId, kitty_id: T::KittyIndex) {
+	pub fn append(account: &T::AccountId, kitty_id: T::KittyId) {
 		let head = Self::read_head(account);
 		let new_head = KittyLinkedItem {
 			prev: Some(kitty_id),
@@ -119,7 +135,7 @@ impl<T: Trait> OwnedKitties<T> {
 		Self::write(account, Some(kitty_id), item);
 	}
 
-	pub fn remove(account: &T::AccountId, kitty_id: T::KittyIndex) {
+	pub fn remove(account: &T::AccountId, kitty_id: T::KittyId) {
 		if let Some(item) = <OwnedKitties<T>>::take((&account, Some(kitty_id))) {
 			let prev = Self::read(account, item.prev);
 			let new_prev = KittyLinkedItem {
@@ -154,19 +170,20 @@ impl<T: Trait> Module<T> {
 		payload.using_encoded(blake2_128)
 	}
 
-	fn next_kitty_id() -> sp_std::result::Result<T::KittyIndex, DispatchError> {
+	fn next_kitty_id() -> sp_std::result::Result<T::KittyId, DispatchError> {
 		let kitty_id = Self::kitties_count();
-		if kitty_id == T::KittyIndex::max_value() {
+		if kitty_id == T::KittyId::max_value() {
 			return Err(Error::<T>::KittiesCountOverflow.into());
 		}
 		Ok(kitty_id)
 	}
 
-	fn insert_owned_kitty(owner: &T::AccountId, kitty_id: T::KittyIndex) {
+	fn insert_owned_kitty(owner: &T::AccountId, kitty_id: T::KittyId) {
 		// 作业
+		<OwnedKitties<T>>::append(&owner,kitty_id);
 	}
 
-	fn insert_kitty(owner: &T::AccountId, kitty_id: T::KittyIndex, kitty: Kitty) {
+	fn insert_kitty(owner: &T::AccountId, kitty_id: T::KittyId, kitty: Kitty) {
 		// Create and store kitty
 		Kitties::<T>::insert(kitty_id, kitty);
 		KittiesCount::<T>::put(kitty_id + 1.into());
@@ -174,7 +191,7 @@ impl<T: Trait> Module<T> {
 		Self::insert_owned_kitty(owner, kitty_id);
 	}
 
-	fn do_breed(sender: &T::AccountId, kitty_id_1: T::KittyIndex, kitty_id_2: T::KittyIndex) -> DispatchResult {
+	fn do_breed(sender: &T::AccountId, kitty_id_1: T::KittyId, kitty_id_2: T::KittyId) -> DispatchResult {
 		let kitty1 = Self::kitties(kitty_id_1).ok_or(Error::<T>::InvalidKittyId)?;
 		let kitty2 = Self::kitties(kitty_id_2).ok_or(Error::<T>::InvalidKittyId)?;
 
@@ -253,7 +270,7 @@ mod tests {
 		type OnKilledAccount = ();
 	}
 	impl Trait for Test {
-		type KittyIndex = u32;
+		type KittyId = u32;
 	}
 	type OwnedKittiesTest = OwnedKitties<Test>;
 
@@ -322,5 +339,11 @@ mod tests {
 	#[test]
 	fn owned_kitties_can_remove_values() {
 		// 作业
+		OwnedKittiesTest::append(&0, 1);
+
+		assert_eq!(OwnedKittiesTest::remove(&0,1), Some(KittyLinkedItem {
+			prev: None,
+			next: None,
+		}));
 	}
 }

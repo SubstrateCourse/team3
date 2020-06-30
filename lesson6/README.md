@@ -123,3 +123,54 @@ git checkout <branch/tag/sha1>
 
 Noted though you will likely get faster and more thorough support if you stick with the releases
 provided in this repository.
+
+### lesson6作业题:
+
+#### 一、补完剩下的代码
+
+                  1. 新增代码修改
+
+
+
+​       ![新增小猫修改代码](.\assest\新增小猫修改代码.jpg)
+
+2. 转移小猫代码
+
+ ![转移小猫代码](.\assest\转移小猫代码.jpg)
+
+3. 测试删除小猫代码
+
+​     ![测试删除小猫](.\assest\测试删除小猫.jpg)
+
+
+
+#### 二、对比pallet-asset和pallet-balances,简单分析下pallet-asset都有哪些缺失使得其不适合生产环境使用
+
+ 注意：以太坊的问之一是状态爆炸
+
+#### pallet-asset：
+
+        1. 非常简单的多资产管理模块
+        2. 功能简单；案例只是为了演示功能效果，不适合生产环境使用
+        3. 代码中函数方式实现也比较简单
+
+pallet-balance
+
+1. 单一资产管理模块，只支持一个TOKEN
+2. 可以通过instance来实现多资产管理，
+3. 支持不够灵活
+
+pallet-generic-asset
+
+1. 多资产管理模块
+2. 功能较为丰富；比如权限管理、版本控制、数据迁移、token发行/销毁
+3. 实现了trait Currency,可以和其他的模块兼容；比如stacking质押模块、双币种支持。。。
+
+#### 三、简单分析下为什么Polkadot配置的Balance类型是u128,而不是类似以太坊的u256
+
+注意：DOT发行量是1000万，精度是12位，年增发率是10%
+
+1. Polkadot基于substrate,而substrate基于Rust语言编写
+2. DOT发行量1000W ，数据空间、性能、精确度上u128完全够用
+3. 以太坊发行量1个亿，以太坊基于Go语言开发
+4. rust以安全和性能都非常优秀，GO语言性能也不错但安全性考虑不是首要 
