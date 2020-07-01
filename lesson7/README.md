@@ -10,6 +10,28 @@ cargo test -p pallet-kitties
 ````
 ![image](./images/compile_ok.png)
 
+````bash
+cd 
+yarn
+yarn start
+````
+Go to http://localhost:3000/#/Kitties
+
+Creata some kitties
+
+![image](./images/create_a_kitty.png)
+
+Transfer on to Bob
+
+![image](./images/transfer_to_Bob.png)
+
+Kitties UI
+
+![image](./images/kitties_ui.png)
+
+Bob buy one 
+![image](./images/kitties_after_Bob_buy.png)
+
 2. 修复单元测试   
 修改代码同以上文件
 ![image](./images/test_ok.png)
