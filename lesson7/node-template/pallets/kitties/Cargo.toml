@@ -16,6 +16,8 @@ sp-std = { version = "2.0.0-rc2", default-features = false, git = 'https://githu
 
 [dev-dependencies]
 sp-core = { version = "2.0.0-rc2", git = 'https://github.com/paritytech/substrate.git', tag = 'v2.0.0-rc2' }
+pallet-balances = { version = "2.0.0-rc2", git = 'https://github.com/paritytech/substrate.git', tag = 'v2.0.0-rc2' }
+
 
 [features]
 default = ["std"]
