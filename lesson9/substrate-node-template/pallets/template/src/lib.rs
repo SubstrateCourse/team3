@@ -1,5 +1,6 @@
 #![cfg_attr(not(feature = "std"), no_std)]
 
+use core::convert::TryInto;
 /// A FRAME pallet template with necessary imports
 
 /// Feel free to remove or edit this file as needed.
@@ -8,15 +9,11 @@
 
 /// For more guidance on Substrate FRAME, see the example pallet
 /// https://github.com/paritytech/substrate/blob/master/frame/example/src/lib.rs
-
-use frame_support::{debug, decl_module, decl_storage, decl_event, decl_error, dispatch};
+use frame_support::{debug, decl_error, decl_event, decl_module, decl_storage, dispatch};
 use frame_system::{
     self as system, ensure_signed,
-    offchain::{
-        AppCrypto, CreateSignedTransaction, SendSignedTransaction, Signer,
-    },
+    offchain::{AppCrypto, CreateSignedTransaction, SendSignedTransaction, Signer},
 };
-use core::{convert::TryInto};
 
 use sp_runtime::{
     offchain as rt_offchain,
@@ -33,8 +30,8 @@ use sp_std::str;
 // We use `alt_serde`, and Xanewok-modified `serde_json` so that we can compile the program
 //   with serde(features `std`) and alt_serde(features `no_std`).
 use alt_serde::{Deserialize, Deserializer};
-use serde_json::json;
 use parity_scale_codec::{Decode, Encode};
+use serde_json::json;
 use sp_core::crypto::KeyTypeId;
 
 #[cfg(test)]
@@ -70,21 +67,24 @@ pub mod crypto {
     // implemented for mock runtime in test
     impl frame_system::offchain::AppCrypto<<Sr25519Signature as Verify>::Signer, Sr25519Signature>
         for TestAuthId
-        {
-            type RuntimeAppPublic = Public;
-            type GenericSignature = sp_core::sr25519::Signature;
-            type GenericPublic = sp_core::sr25519::Public;
-        }
+    {
+        type RuntimeAppPublic = Public;
+        type GenericSignature = sp_core::sr25519::Signature;
+        type GenericPublic = sp_core::sr25519::Public;
+    }
 }
 
-pub const HTTP_REMOTE_01_CRYPTOCOMPARE_REQUEST_BYTES: &[u8] = b"https://min-api.cryptocompare.com/data/price?fsym=eth&tsyms=USD";
+pub const HTTP_REMOTE_01_CRYPTOCOMPARE_REQUEST_BYTES: &[u8] =
+    b"https://min-api.cryptocompare.com/data/price?fsym=eth&tsyms=USD";
 
-pub const HTTP_REMOTE_02_COINMARKETCAP_REQUEST_BYTES: &[u8] = b"https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest?symbol=ETH";
-pub const HTTP_HEADER_02_COINMARKETCAP_API_KEY_BYTES: &[u8] = b"6d479e2a-cd6d-489a-9697-b69f31ac5830";
+pub const HTTP_REMOTE_02_COINMARKETCAP_REQUEST_BYTES: &[u8] =
+    b"https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest?symbol=ETH";
+pub const HTTP_HEADER_02_COINMARKETCAP_API_KEY_BYTES: &[u8] =
+    b"6d479e2a-cd6d-489a-9697-b69f31ac5830";
 
 enum ChannelType {
-    ChannelTypeCC,    // https://min-api.cryptocompare.com
-        ChannelTypeCMC,   // https://pro-api.coinmarketcap.com
+    ChannelTypeCC,  // https://min-api.cryptocompare.com
+    ChannelTypeCMC, // https://pro-api.coinmarketcap.com
 }
 
 pub fn de_string_to_bytes<'de, D>(de: D) -> Result<Vec<u8>, D::Error>
@@ -96,7 +96,9 @@ where
 }
 
 pub fn de_float_to_integer<'de, D>(de: D) -> Result<u32, D::Error>
-where D: Deserializer<'de> {
+where
+    D: Deserializer<'de>,
+{
     let f: f32 = Deserialize::deserialize(de)?;
     Ok((f * 100.0) as u32)
 }
@@ -151,9 +153,8 @@ struct ETHPriceInfo02CMC {
     data: Data,
 }
 
-
 /// The pallet's configuration trait.
-pub trait Trait: system::Trait + CreateSignedTransaction<Call<Self>>{
+pub trait Trait: system::Trait + CreateSignedTransaction<Call<Self>> {
     // Add other types and constants required to configure this pallet.
 
     /// The overarching event type.
@@ -162,7 +163,6 @@ pub trait Trait: system::Trait + CreateSignedTransaction<Call<Self>>{
     type AuthorityId: AppCrypto<Self::Public, Self::Signature>;
 
     type Call: From<Call<Self>>;
-
 }
 
 // This pallet's storage items.
@@ -177,7 +177,10 @@ decl_storage! {
 
 // The pallet's events
 decl_event!(
-    pub enum Event<T> where AccountId = <T as system::Trait>::AccountId {
+    pub enum Event<T>
+    where
+        AccountId = <T as system::Trait>::AccountId,
+    {
         NewPrice(u32, AccountId),
     }
 );
@@ -193,16 +196,16 @@ decl_error! {
 
 // The pallet's dispatchable functions.
 decl_module! {
-	/// The module declaration.
-	pub struct Module<T: Trait> for enum Call where origin: T::Origin {
-		// Initializing errors
-		// this includes information about your errors in the node's metadata.
-		// it is needed only if you are using errors in your pallet
-		type Error = Error<T>;
+    /// The module declaration.
+    pub struct Module<T: Trait> for enum Call where origin: T::Origin {
+        // Initializing errors
+        // this includes information about your errors in the node's metadata.
+        // it is needed only if you are using errors in your pallet
+        type Error = Error<T>;
 
-		// Initializing events
-		// this is needed only if you are using events in your pallet
-		fn deposit_event() = default;
+        // Initializing events
+        // this is needed only if you are using events in your pallet
+        fn deposit_event() = default;
 
         #[weight = 10_000]
         pub fn submit_price(origin, price: u32) -> dispatch::DispatchResult {
@@ -223,7 +226,7 @@ decl_module! {
                     }
                 },
                 _ => debug::info!("ignore..."),
-            
+
             }
         }
 
@@ -231,7 +234,6 @@ decl_module! {
 }
 
 impl<T: Trait> Module<T> {
-
     fn add_price(who: T::AccountId, price: u32) {
         debug::info!("Adding eth price: {}", price);
         Prices::mutate(|prices| {
@@ -244,10 +246,10 @@ impl<T: Trait> Module<T> {
     /// A helper function to fetch the price and send signed transaction.
     fn fetch_price_and_send_signed() -> Result<(), &'static str> {
         let signer = Signer::<T, T::AuthorityId>::all_accounts();
-		if !signer.can_sign() {
+        if !signer.can_sign() {
             debug::error!("No local account available");
-			return Err("No local account available");
-		}
+            return Err("No local account available");
+        }
 
         //let signer = Signer::<T, T::AuthorityId>::all_accounts();
         // if !signer.can_sign() {
@@ -257,23 +259,23 @@ impl<T: Trait> Module<T> {
         // }
         // Make an external HTTP request to fetch the current price.
         // Note this call will block until response is received.
-        let price1 = Self::fetch_eth_price(ChannelType::ChannelTypeCC).map_err(|_| "Failed to fetch eth price from CC")?;
-        let price2 = Self::fetch_eth_price(ChannelType::ChannelTypeCMC).map_err(|_| "Failed to fetch eth price from CMC")?;
-        let price = (price1 + price2)/2;
+        let price1 = Self::fetch_eth_price(ChannelType::ChannelTypeCC)
+            .map_err(|_| "Failed to fetch eth price from CC")?;
+        let price2 = Self::fetch_eth_price(ChannelType::ChannelTypeCMC)
+            .map_err(|_| "Failed to fetch eth price from CMC")?;
+        let price = (price1 + price2) / 2;
         debug::info!("average eth price in usd cents: {}", price);
 
         // Using `send_signed_transaction` associated type we create and submit a transaction
         // representing the call, we've just created.
         // Submit signed will return a vector of results for all accounts that were found in the
         // local keystore with expected `KEY_TYPE`.
-        let results = signer.send_signed_transaction(
-            |_account| {
-                // Received price is wrapped into a call to `submit_price` public function of this pallet.
-                // This means that the transaction, when executed, will simply call that function passing
-                // `price` as an argument.
-                Call::submit_price(price)
-        }
-        );
+        let results = signer.send_signed_transaction(|_account| {
+            // Received price is wrapped into a call to `submit_price` public function of this pallet.
+            // This means that the transaction, when executed, will simply call that function passing
+            // `price` as an argument.
+            Call::submit_price(price)
+        });
 
         for (acc, res) in &results {
             match res {
@@ -285,7 +287,7 @@ impl<T: Trait> Module<T> {
         Ok(())
     }
 
-    fn fetch_eth_price(channel_type : ChannelType) -> Result<u32, Error<T>> {
+    fn fetch_eth_price(channel_type: ChannelType) -> Result<u32, Error<T>> {
         match channel_type {
             ChannelType::ChannelTypeCC => {
                 let resp_bytes = Self::fetch_from_remote_01_cryptocompare().map_err(|e| {
@@ -296,7 +298,6 @@ impl<T: Trait> Module<T> {
                 //debug::info!("fetch_from_remote_01_cryptocompare success, and parse it");
 
                 match Self::parse_eth_price_01_cryptocompare_resp(resp_bytes) {
-
                     Ok(price) => {
                         debug::info!("<cryptocompare> eth usd in cents: {}", price.usd);
                         Ok(price.usd)
@@ -305,9 +306,8 @@ impl<T: Trait> Module<T> {
                         debug::error!("parse error: {:?}", err);
                         Err(err)
                     }
-
                 }
-            },
+            }
             ChannelType::ChannelTypeCMC => {
                 let resp_bytes = Self::fetch_from_remote_02_coinmarketcap().map_err(|e| {
                     debug::error!("fetch_from_remote error: {:?}", e);
@@ -317,7 +317,6 @@ impl<T: Trait> Module<T> {
                 //debug::info!("fetch_from_remote_01_cryptocompare success, and parse it");
 
                 match Self::parse_eth_price_02_coinmarketcap_resp(resp_bytes) {
-
                     Ok(price) => {
                         let price_usd_cents = price.data.eth.quote.usd.price;
                         debug::info!("<coinmarketcap> eth usd in cents: {}", price_usd_cents);
@@ -367,7 +366,10 @@ impl<T: Trait> Module<T> {
             .map_err(|_| <Error<T>>::HttpFetching01Error)?;
 
         if response.code != 200 {
-            debug::error!("Unexpected http request from <01>cryptocompare status code: {}", response.code);
+            debug::error!(
+                "Unexpected http request from <01>cryptocompare status code: {}",
+                response.code
+            );
             return Err(<Error<T>>::HttpFetching01Error);
         }
 
@@ -375,7 +377,9 @@ impl<T: Trait> Module<T> {
         Ok(response.body().collect::<Vec<u8>>())
     }
 
-    fn parse_eth_price_01_cryptocompare_resp(resp_bytes : Vec<u8>) -> Result<ETHPriceInfo01CC, Error<T>> {
+    fn parse_eth_price_01_cryptocompare_resp(
+        resp_bytes: Vec<u8>,
+    ) -> Result<ETHPriceInfo01CC, Error<T>> {
         let resp_str = str::from_utf8(&resp_bytes).map_err(|_| <Error<T>>::HttpFetching01Error)?;
         let eth_info: ETHPriceInfo01CC =
             serde_json::from_str(&resp_str).map_err(|_| <Error<T>>::HttpFetching01Error)?;
@@ -417,7 +421,10 @@ impl<T: Trait> Module<T> {
             .map_err(|_| <Error<T>>::HttpFetching02Error)?;
 
         if response.code != 200 {
-            debug::error!("Unexpected http request from <02>coinmarketcap status code: {}", response.code);
+            debug::error!(
+                "Unexpected http request from <02>coinmarketcap status code: {}",
+                response.code
+            );
             return Err(<Error<T>>::HttpFetching02Error);
         }
 
@@ -425,11 +432,12 @@ impl<T: Trait> Module<T> {
         Ok(response.body().collect::<Vec<u8>>())
     }
 
-    fn parse_eth_price_02_coinmarketcap_resp(resp_bytes : Vec<u8>) -> Result<ETHPriceInfo02CMC, Error<T>> {
+    fn parse_eth_price_02_coinmarketcap_resp(
+        resp_bytes: Vec<u8>,
+    ) -> Result<ETHPriceInfo02CMC, Error<T>> {
         let resp_str = str::from_utf8(&resp_bytes).map_err(|_| <Error<T>>::HttpFetching02Error)?;
         let eth_info: ETHPriceInfo02CMC =
             serde_json::from_str(&resp_str).map_err(|_| <Error<T>>::HttpFetching02Error)?;
         Ok(eth_info)
     }
 }
-

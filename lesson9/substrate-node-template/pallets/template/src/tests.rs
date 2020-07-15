@@ -94,8 +94,8 @@ where
         _account: <TestRuntime as system::Trait>::AccountId,
         index: <TestRuntime as system::Trait>::Index,
     ) -> Option<(
-    Call<TestRuntime>,
-    <TestExtrinsic as sp_runtime::traits::Extrinsic>::SignaturePayload,
+        Call<TestRuntime>,
+        <TestExtrinsic as sp_runtime::traits::Extrinsic>::SignaturePayload,
     )> {
         Some((call, (index, ())))
     }
@@ -155,22 +155,14 @@ fn test_onchain() {
     t.execute_with(|| {
         let price = 123;
         let acct: <TestRuntime as system::Trait>::AccountId = Default::default();
-        assert_ok!(OffchainDemo::submit_price(
-                Origin::signed(acct),
-                price
-        ));
+        assert_ok!(OffchainDemo::submit_price(Origin::signed(acct), price));
         assert_eq!(<Prices>::get(), vec![price]);
 
         let price2 = 345;
-        assert_ok!(OffchainDemo::submit_price(
-                Origin::signed(acct),
-                price2
-        ));
+        assert_ok!(OffchainDemo::submit_price(Origin::signed(acct), price2));
         assert_eq!(<Prices>::get(), vec![price, price2]);
     });
 }
 
 #[test]
-fn test_offchain() {
-    
-}
+fn test_offchain() {}
