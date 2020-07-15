@@ -5,6 +5,10 @@
 利用 off-chain worker，试从两个或以上的加密货币价格提供者 (最少两个)，透过其 API 取得 ETH 币的价格，
 取其平均值，然后把它推 (append) 到 ocw 链下储存的 Vec 内。
 
+![build_ok](./build_ok.png)
+Demo
+![run_ethusd_demo_ok](./run_ethusd_demo_ok.png)
+
 加密货币价格提供者包括以下：
   - https://coinmarketcap.com/
   - https://coincap.io/
@@ -14,3 +18,6 @@
 **(3 分)** 
 
 附加题：为你的 ocw 写单元测试
+
+测试演示
+![test_ok](./test_ok.png)
