@@ -87,7 +87,6 @@ pub const FETCHED_CRYPOTS: [(&[u8], &[u8], &[u8]); 2] = [
 	),
 ];
 
-//pub const HTTP_HEADER_02_COINMARKETCAP_API_KEY_BYTES: &[u8] = b"6d479e2a-cd6d-489a-9697-b69f31ac5830";
 
 pub fn de_string_to_bytes<'de, D>(de: D) -> Result<Vec<u8>, D::Error>
 	where
