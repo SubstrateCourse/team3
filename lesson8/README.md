@@ -17,6 +17,17 @@
 * sum(2) = 14
 
 计算要在链下完成，链上只用作储存。提交到鏈上時用具簽名交易。
+````bash
+./target/release/node-template purge-chain --dev
+./target/release/node-template --dev
+cargo test
+````
+![image](./images/compile_ok.png)
+
+![image](./images/offchainwork_run.png)
+
+![image](./images/saveNumber_frontpage.png)
+
 
 **(3 分)** 
 
@@ -24,3 +35,8 @@
 
 * 第一个是测试链下的计算逻辑
 * 第二个是测试链上的函数
+
+
+COPY FROM ANSWER， TEST OK
+
+![image](./images/test_ok.png)
