@@ -11,6 +11,17 @@
   - https://www.cryptocompare.com/
   - 其他你自己找到的提供者也可以
 
+  offchain代码
+  ![](./lsn9_1offchain.png)
+  fetch代码
+  ![](./lsn9_2fetch.png)
+
+  运行得到price
+  ![](./lsn9_3price.png)
+
 **(3 分)** 
 
 附加题：为你的 ocw 写单元测试
+
+动态获取price, 用浏览器测试有效性, 写入vec, 价格*100
+  ![](./lsn9_4block.png)
