@@ -1,0 +1,1179 @@
+diff --git a/lesson9/substrate-node-template/Cargo.lock b/lesson9/substrate-node-template/Cargo.lock
+index 242e534..74d7a1f 100644
+--- a/lesson9/substrate-node-template/Cargo.lock
++++ b/lesson9/substrate-node-template/Cargo.lock
+@@ -54,6 +54,26 @@ dependencies = [
+  "num-traits 0.2.11",
+ ]
+ 
++[[package]]
++name = "alt_serde"
++version = "1.0.104"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "03beeddedd09889b96def26f78ba46e34ffd9bdaaa33b2c980cbaa1d0e762686"
++dependencies = [
++ "alt_serde_derive",
++]
++
++[[package]]
++name = "alt_serde_derive"
++version = "1.0.104"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "6757ed5faa82ccfbfa1837cd7a7a2e1bdb634236f21fa74d6c5c5736152838a1"
++dependencies = [
++ "proc-macro2",
++ "quote 1.0.6",
++ "syn 1.0.25",
++]
++
+ [[package]]
+ name = "ansi_term"
+ version = "0.11.0"
+@@ -1168,7 +1188,7 @@ dependencies = [
+  "parking_lot 0.9.0",
+  "pin-project",
+  "serde",
+- "serde_json",
++ "serde_json 1.0.53",
+ ]
+ 
+ [[package]]
+@@ -1781,7 +1801,7 @@ dependencies = [
+  "jsonrpc-pubsub",
+  "log",
+  "serde",
+- "serde_json",
++ "serde_json 1.0.53",
+  "url 1.7.2",
+ ]
+ 
+@@ -1795,7 +1815,7 @@ dependencies = [
+  "log",
+  "serde",
+  "serde_derive",
+- "serde_json",
++ "serde_json 1.0.53",
+ ]
+ 
+ [[package]]
+@@ -2923,12 +2943,16 @@ dependencies = [
+ name = "pallet-template"
+ version = "2.0.0-rc2"
+ dependencies = [
++ "alt_serde",
+  "frame-support",
+  "frame-system",
+  "parity-scale-codec",
++ "parking_lot 0.10.2",
++ "serde_json 1.0.44",
+  "sp-core",
+  "sp-io",
+  "sp-runtime",
++ "sp-std",
+ ]
+ 
+ [[package]]
+@@ -3944,7 +3968,7 @@ dependencies = [
+  "sc-network",
+  "sc-telemetry",
+  "serde",
+- "serde_json",
++ "serde_json 1.0.53",
+  "sp-chain-spec",
+  "sp-core",
+  "sp-runtime",
+@@ -3987,7 +4011,7 @@ dependencies = [
+  "sc-service",
+  "sc-telemetry",
+  "sc-tracing",
+- "serde_json",
++ "serde_json 1.0.53",
+  "sp-blockchain",
+  "sp-core",
+  "sp-keyring",
+@@ -4213,7 +4237,7 @@ dependencies = [
+  "sc-network",
+  "sc-network-gossip",
+  "sc-telemetry",
+- "serde_json",
++ "serde_json 1.0.53",
+  "sp-api",
+  "sp-arithmetic",
+  "sp-blockchain",
+@@ -4253,7 +4277,7 @@ dependencies = [
+  "hex",
+  "parking_lot 0.10.2",
+  "rand 0.7.3",
+- "serde_json",
++ "serde_json 1.0.53",
+  "sp-application-crypto",
+  "sp-core",
+  "subtle 2.2.2",
+@@ -4293,7 +4317,7 @@ dependencies = [
+  "sc-client-api",
+  "sc-peerset",
+  "serde",
+- "serde_json",
++ "serde_json 1.0.53",
+  "slog",
+  "slog_derive",
+  "smallvec 0.6.13",
+@@ -4361,7 +4385,7 @@ dependencies = [
+  "futures 0.3.5",
+  "libp2p",
+  "log",
+- "serde_json",
++ "serde_json 1.0.53",
+  "sp-utils",
+  "wasm-timer",
+ ]
+@@ -4392,7 +4416,7 @@ dependencies = [
+  "sc-executor",
+  "sc-keystore",
+  "sc-rpc-api",
+- "serde_json",
++ "serde_json 1.0.53",
+  "sp-api",
+  "sp-blockchain",
+  "sp-chain-spec",
+@@ -4422,7 +4446,7 @@ dependencies = [
+  "parity-scale-codec",
+  "parking_lot 0.10.2",
+  "serde",
+- "serde_json",
++ "serde_json 1.0.53",
+  "sp-chain-spec",
+  "sp-core",
+  "sp-rpc",
+@@ -4442,7 +4466,7 @@ dependencies = [
+  "jsonrpc-ws-server",
+  "log",
+  "serde",
+- "serde_json",
++ "serde_json 1.0.53",
+  "sp-runtime",
+ ]
+ 
+@@ -4481,7 +4505,7 @@ dependencies = [
+  "sc-tracing",
+  "sc-transaction-pool",
+  "serde",
+- "serde_json",
++ "serde_json 1.0.53",
+  "slog",
+  "sp-api",
+  "sp-application-crypto",
+@@ -4550,7 +4574,7 @@ dependencies = [
+  "parking_lot 0.10.2",
+  "sc-telemetry",
+  "serde",
+- "serde_json",
++ "serde_json 1.0.53",
+  "slog",
+  "tracing-core",
+ ]
+@@ -4721,6 +4745,16 @@ dependencies = [
+  "syn 1.0.25",
+ ]
+ 
++[[package]]
++name = "serde_json"
++version = "1.0.44"
++source = "git+https://github.com/Xanewok/json?branch=no-std#7954c3a363cf78bde5bbf2e875a222ff9ccafed4"
++dependencies = [
++ "alt_serde",
++ "itoa",
++ "ryu",
++]
++
+ [[package]]
+ name = "serde_json"
+ version = "1.0.53"
+@@ -4815,7 +4849,7 @@ dependencies = [
+  "chrono",
+  "erased-serde",
+  "serde",
+- "serde_json",
++ "serde_json 1.0.53",
+  "slog",
+ ]
+ 
+@@ -5023,7 +5057,7 @@ version = "2.0.0-rc2"
+ source = "git+https://github.com/paritytech/substrate.git?tag=v2.0.0-rc2#45b9f0a9cbf901abaa9f1fca5fe8baeed029133d"
+ dependencies = [
+  "serde",
+- "serde_json",
++ "serde_json 1.0.53",
+ ]
+ 
+ [[package]]
+@@ -5286,7 +5320,7 @@ version = "2.0.0-rc2"
+ source = "git+https://github.com/paritytech/substrate.git?tag=v2.0.0-rc2#45b9f0a9cbf901abaa9f1fca5fe8baeed029133d"
+ dependencies = [
+  "serde",
+- "serde_json",
++ "serde_json 1.0.53",
+ ]
+ 
+ [[package]]
+diff --git a/lesson9/substrate-node-template/pallets/template/Cargo.toml b/lesson9/substrate-node-template/pallets/template/Cargo.toml
+index 1705f3e..10f069b 100644
+--- a/lesson9/substrate-node-template/pallets/template/Cargo.toml
++++ b/lesson9/substrate-node-template/pallets/template/Cargo.toml
+@@ -8,11 +8,11 @@ name = 'pallet-template'
+ repository = 'https://github.com/substrate-developer-hub/substrate-node-template/'
+ version = '2.0.0-rc2'
+ 
+-[dependencies.codec]
+-default-features = false
+-features = ['derive']
+-package = 'parity-scale-codec'
+-version = '1.3.0'
++#[dependencies.codec]
++#default-features = false
++#features = ['derive']
++#package = 'parity-scale-codec'
++#version = '1.3.0'
+ 
+ [dependencies.frame-support]
+ default-features = false
+@@ -26,28 +26,48 @@ git = 'https://github.com/paritytech/substrate.git'
+ tag = 'v2.0.0-rc2'
+ version = '2.0.0-rc2'
+ 
+-[dev-dependencies.sp-core]
++[dependencies.sp-std]
+ default-features = false
+ git = 'https://github.com/paritytech/substrate.git'
+ tag = 'v2.0.0-rc2'
+ version = '2.0.0-rc2'
+ 
+-[dev-dependencies.sp-io]
++[dependencies.sp-core]
+ default-features = false
+ git = 'https://github.com/paritytech/substrate.git'
+ tag = 'v2.0.0-rc2'
+ version = '2.0.0-rc2'
+ 
+-[dev-dependencies.sp-runtime]
++[dependencies.sp-io]
+ default-features = false
+ git = 'https://github.com/paritytech/substrate.git'
+ tag = 'v2.0.0-rc2'
+ version = '2.0.0-rc2'
+ 
++[dependencies.sp-runtime]
++default-features = false
++git = 'https://github.com/paritytech/substrate.git'
++tag = 'v2.0.0-rc2'
++version = '2.0.0-rc2'
++
++[dependencies]
++# external dependencies
++parity-scale-codec = { default-features = false, features = ['derive'], version = '1.3.0' }
++parking_lot = "0.10.0"
++#sp-io = { version = '2.0.0-rc2', default-features = false }
++# https://serde.rs/derive.html
++alt_serde = { version = "1", default-features = false, features = ["derive"] }
++# updated to `alt_serde_json` when latest version supporting feature `alloc` is released
++serde_json = { version = "1", default-features = false, git = "https://github.com/Xanewok/json", branch = "no-std", features = ["alloc"] }
++
+ [features]
+ default = ['std']
+ std = [
+-    'codec/std',
++#'codec/std',
+     'frame-support/std',
+     'frame-system/std',
++    'sp-core/std',
++    'sp-io/std',
++    'sp-runtime/std',
++    'sp-std/std',
+ ]
+diff --git a/lesson9/substrate-node-template/pallets/template/src/lib.rs b/lesson9/substrate-node-template/pallets/template/src/lib.rs
+index 74380bc..01025e4 100644
+--- a/lesson9/substrate-node-template/pallets/template/src/lib.rs
++++ b/lesson9/substrate-node-template/pallets/template/src/lib.rs
+@@ -10,7 +10,32 @@
+ /// https://github.com/paritytech/substrate/blob/master/frame/example/src/lib.rs
+ 
+ use frame_support::{debug, decl_module, decl_storage, decl_event, decl_error, dispatch};
+-use frame_system::{self as system, ensure_signed};
++use frame_system::{
++    self as system, ensure_signed,
++    offchain::{
++        AppCrypto, CreateSignedTransaction, SendSignedTransaction, Signer,
++    },
++};
++use core::{convert::TryInto};
++
++use sp_runtime::{
++    offchain as rt_offchain,
++    offchain::storage::StorageValueRef,
++    transaction_validity::{
++        InvalidTransaction, TransactionPriority, TransactionSource, TransactionValidity,
++        ValidTransaction,
++    },
++};
++
++use sp_std::prelude::*; //Vec need
++use sp_std::str;
++
++// We use `alt_serde`, and Xanewok-modified `serde_json` so that we can compile the program
++//   with serde(features `std`) and alt_serde(features `no_std`).
++use alt_serde::{Deserialize, Deserializer};
++use serde_json::json;
++use parity_scale_codec::{Decode, Encode};
++use sp_core::crypto::KeyTypeId;
+ 
+ #[cfg(test)]
+ mod mock;
+@@ -18,45 +43,152 @@ mod mock;
+ #[cfg(test)]
+ mod tests;
+ 
++pub const KEY_TYPE: KeyTypeId = KeyTypeId(*b"abcd");
++
++pub mod crypto {
++    use crate::KEY_TYPE;
++    use sp_core::sr25519::Signature as Sr25519Signature;
++
++    pub type AuthorityId = Public;
++
++    use sp_runtime::{
++        app_crypto::{app_crypto, sr25519},
++        traits::Verify,
++        MultiSignature, MultiSigner,
++    };
++
++    app_crypto!(sr25519, KEY_TYPE);
++
++    pub struct TestAuthId;
++    // implemented for ocw-runtime
++    impl frame_system::offchain::AppCrypto<MultiSigner, MultiSignature> for TestAuthId {
++        type RuntimeAppPublic = Public;
++        type GenericSignature = sp_core::sr25519::Signature;
++        type GenericPublic = sp_core::sr25519::Public;
++    }
++
++    // implemented for mock runtime in test
++    impl frame_system::offchain::AppCrypto<<Sr25519Signature as Verify>::Signer, Sr25519Signature>
++        for TestAuthId
++        {
++            type RuntimeAppPublic = Public;
++            type GenericSignature = sp_core::sr25519::Signature;
++            type GenericPublic = sp_core::sr25519::Public;
++        }
++}
++
++pub const HTTP_REMOTE_01_CRYPTOCOMPARE_REQUEST_BYTES: &[u8] = b"https://min-api.cryptocompare.com/data/price?fsym=eth&tsyms=USD";
++
++pub const HTTP_REMOTE_02_COINMARKETCAP_REQUEST_BYTES: &[u8] = b"https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest?symbol=ETH";
++pub const HTTP_HEADER_02_COINMARKETCAP_API_KEY_BYTES: &[u8] = b"6d479e2a-cd6d-489a-9697-b69f31ac5830";
++
++enum ChannelType {
++    ChannelTypeCC,    // https://min-api.cryptocompare.com
++        ChannelTypeCMC,   // https://pro-api.coinmarketcap.com
++}
++
++pub fn de_string_to_bytes<'de, D>(de: D) -> Result<Vec<u8>, D::Error>
++where
++    D: Deserializer<'de>,
++{
++    let s: &str = Deserialize::deserialize(de)?;
++    Ok(s.as_bytes().to_vec())
++}
++
++pub fn de_float_to_integer<'de, D>(de: D) -> Result<u32, D::Error>
++where D: Deserializer<'de> {
++    let f: f32 = Deserialize::deserialize(de)?;
++    Ok((f * 100.0) as u32)
++}
++
++#[serde(crate = "alt_serde")]
++#[derive(Deserialize, Encode, Decode, Default)]
++struct ETHPriceInfo01CC {
++    #[serde(rename(deserialize = "USD"), deserialize_with = "de_float_to_integer")]
++    usd: u32,
++}
++
++#[serde(crate = "alt_serde")]
++#[derive(Deserialize, Encode, Decode, Default)]
++struct Status {
++    #[serde(deserialize_with = "de_string_to_bytes")]
++    timestamp: Vec<u8>,
++    error_code: u32,
++    //error_message: String,
++}
++
++#[serde(crate = "alt_serde")]
++#[derive(Deserialize, Encode, Decode, Default)]
++struct Data {
++    #[serde(rename = "ETH")]
++    eth: ETH,
++}
++
++#[serde(crate = "alt_serde")]
++#[derive(Deserialize, Encode, Decode, Default)]
++struct ETH {
++    quote: Quote,
++}
++
++#[serde(crate = "alt_serde")]
++#[derive(Deserialize, Encode, Decode, Default)]
++struct Quote {
++    #[serde(rename = "USD")]
++    usd: USD,
++}
++
++#[serde(crate = "alt_serde")]
++#[derive(Deserialize, Encode, Decode, Default)]
++struct USD {
++    #[serde(deserialize_with = "de_float_to_integer")]
++    price: u32,
++}
++
++#[serde(crate = "alt_serde")]
++#[derive(Deserialize, Encode, Decode, Default)]
++struct ETHPriceInfo02CMC {
++    status: Status,
++    data: Data,
++}
++
++
+ /// The pallet's configuration trait.
+-pub trait Trait: system::Trait {
+-	// Add other types and constants required to configure this pallet.
++pub trait Trait: system::Trait + CreateSignedTransaction<Call<Self>>{
++    // Add other types and constants required to configure this pallet.
++
++    /// The overarching event type.
++    type Event: From<Event<Self>> + Into<<Self as system::Trait>::Event>;
++
++    type AuthorityId: AppCrypto<Self::Public, Self::Signature>;
++
++    type Call: From<Call<Self>>;
+ 
+-	/// The overarching event type.
+-	type Event: From<Event<Self>> + Into<<Self as system::Trait>::Event>;
+ }
+ 
+ // This pallet's storage items.
+ decl_storage! {
+-	// It is important to update your storage name so that your pallet's
+-	// storage items are isolated from other pallets.
+-	// ---------------------------------vvvvvvvvvvvvvv
+-	trait Store for Module<T: Trait> as TemplateModule {
+-		// Just a dummy storage item.
+-		// Here we are declaring a StorageValue, `Something` as a Option<u32>
+-		// `get(fn something)` is the default getter which returns either the stored `u32` or `None` if nothing stored
+-		Something get(fn something): Option<u32>;
+-	}
++    // It is important to update your storage name so that your pallet's
++    // storage items are isolated from other pallets.
++    // ---------------------------------vvvvvvvvvvvvvv
++    trait Store for Module<T: Trait> as TemplateModule {
++        Prices get(fn prices): Vec<u32>;
++    }
+ }
+ 
+ // The pallet's events
+ decl_event!(
+-	pub enum Event<T> where AccountId = <T as system::Trait>::AccountId {
+-		/// Just a dummy event.
+-		/// Event `Something` is declared with a parameter of the type `u32` and `AccountId`
+-		/// To emit this event, we call the deposit function, from our runtime functions
+-		SomethingStored(u32, AccountId),
+-	}
++    pub enum Event<T> where AccountId = <T as system::Trait>::AccountId {
++        NewPrice(u32, AccountId),
++    }
+ );
+-
+ // The pallet's errors
+ decl_error! {
+-	pub enum Error for Module<T: Trait> {
+-		/// Value was None
+-		NoneValue,
+-		/// Value reached maximum and cannot be incremented further
+-		StorageOverflow,
+-	}
++    pub enum Error for Module<T: Trait> {
++        // 01 from https://min-api.cryptocompare.com
++        HttpFetching01Error,
++        // 02 from https://pro-api.coinmarketcap.com
++        HttpFetching02Error,
++    }
+ }
+ 
+ // The pallet's dispatchable functions.
+@@ -72,25 +204,232 @@ decl_module! {
+ 		// this is needed only if you are using events in your pallet
+ 		fn deposit_event() = default;
+ 
+-		#[weight = 10_000]
+-		pub fn save_number(origin, number: u32) -> dispatch::DispatchResult {
+-			// Check it was signed and get the signer. See also: ensure_root and ensure_none
+-			let who = ensure_signed(origin)?;
++        #[weight = 10_000]
++        pub fn submit_price(origin, price: u32) -> dispatch::DispatchResult {
++            // Check it was signed and get the signer. See also: ensure_root and ensure_none
++            let who = ensure_signed(origin)?;
++            Self::add_price(who, price);
++            Ok(())
++        }
+ 
+-			/*******
+-			 * 学员们在这里追加逻辑
+-			 *******/
++        fn offchain_worker(block_number: T::BlockNumber) {
++            debug::info!("Entering off-chain workers");
+ 
+-			Ok(())
+-		}
++            match block_number.try_into().ok().unwrap() % 10 {
++                0 => {
++                    let res = Self::fetch_price_and_send_signed();
++                    if let Err(e) = res {
++                        debug::error!("Error: {}", e);
++                    }
++                },
++                _ => debug::info!("ignore..."),
++            
++            }
++        }
++
++    }
++}
++
++impl<T: Trait> Module<T> {
+ 
+-		fn offchain_worker(block_number: T::BlockNumber) {
+-			debug::info!("Entering off-chain workers");
++    fn add_price(who: T::AccountId, price: u32) {
++        debug::info!("Adding eth price: {}", price);
++        Prices::mutate(|prices| {
++            prices.push(price);
++        });
+ 
+-			/*******
+-			 * 学员们在这里追加逻辑
+-			 *******/
++        Self::deposit_event(RawEvent::NewPrice(price, who));
++    }
++
++    /// A helper function to fetch the price and send signed transaction.
++    fn fetch_price_and_send_signed() -> Result<(), &'static str> {
++        let signer = Signer::<T, T::AuthorityId>::all_accounts();
++		if !signer.can_sign() {
++            debug::error!("No local account available");
++			return Err("No local account available");
+ 		}
+ 
+-	}
++        //let signer = Signer::<T, T::AuthorityId>::all_accounts();
++        // if !signer.can_sign() {
++        //     return Err(
++        //         "No local accounts available. Consider adding one via `author_insertKey` RPC."
++        //     )?
++        // }
++        // Make an external HTTP request to fetch the current price.
++        // Note this call will block until response is received.
++        let price1 = Self::fetch_eth_price(ChannelType::ChannelTypeCC).map_err(|_| "Failed to fetch eth price from CC")?;
++        let price2 = Self::fetch_eth_price(ChannelType::ChannelTypeCMC).map_err(|_| "Failed to fetch eth price from CMC")?;
++        let price = (price1 + price2)/2;
++        debug::info!("average eth price in usd cents: {}", price);
++
++        // Using `send_signed_transaction` associated type we create and submit a transaction
++        // representing the call, we've just created.
++        // Submit signed will return a vector of results for all accounts that were found in the
++        // local keystore with expected `KEY_TYPE`.
++        let results = signer.send_signed_transaction(
++            |_account| {
++                // Received price is wrapped into a call to `submit_price` public function of this pallet.
++                // This means that the transaction, when executed, will simply call that function passing
++                // `price` as an argument.
++                Call::submit_price(price)
++        }
++        );
++
++        for (acc, res) in &results {
++            match res {
++                Ok(()) => debug::info!("[{:?}] Submitted price of {} cents", acc.id, price),
++                Err(e) => debug::error!("[{:?}] Failed to submit transaction: {:?}", acc.id, e),
++            }
++        }
++
++        Ok(())
++    }
++
++    fn fetch_eth_price(channel_type : ChannelType) -> Result<u32, Error<T>> {
++        match channel_type {
++            ChannelType::ChannelTypeCC => {
++                let resp_bytes = Self::fetch_from_remote_01_cryptocompare().map_err(|e| {
++                    debug::error!("fetch_from_remote error: {:?}", e);
++                    <Error<T>>::HttpFetching01Error
++                })?;
++
++                //debug::info!("fetch_from_remote_01_cryptocompare success, and parse it");
++
++                match Self::parse_eth_price_01_cryptocompare_resp(resp_bytes) {
++
++                    Ok(price) => {
++                        debug::info!("<cryptocompare> eth usd in cents: {}", price.usd);
++                        Ok(price.usd)
++                    }
++                    Err(err) => {
++                        debug::error!("parse error: {:?}", err);
++                        Err(err)
++                    }
++
++                }
++            },
++            ChannelType::ChannelTypeCMC => {
++                let resp_bytes = Self::fetch_from_remote_02_coinmarketcap().map_err(|e| {
++                    debug::error!("fetch_from_remote error: {:?}", e);
++                    <Error<T>>::HttpFetching02Error
++                })?;
++
++                //debug::info!("fetch_from_remote_01_cryptocompare success, and parse it");
++
++                match Self::parse_eth_price_02_coinmarketcap_resp(resp_bytes) {
++
++                    Ok(price) => {
++                        let price_usd_cents = price.data.eth.quote.usd.price;
++                        debug::info!("<coinmarketcap> eth usd in cents: {}", price_usd_cents);
++                        Ok(price_usd_cents)
++                    }
++                    Err(err) => {
++                        debug::error!("parse error: {:?}", err);
++                        Err(err)
++                    }
++                }
++            }
++        }
++    }
++
++    fn fetch_from_remote_01_cryptocompare() -> Result<Vec<u8>, Error<T>> {
++        let remote_url_bytes = HTTP_REMOTE_01_CRYPTOCOMPARE_REQUEST_BYTES.to_vec();
++        //let user_agent = HTTP_HEADER_USER_AGENT.to_vec();
++        let remote_url =
++            str::from_utf8(&remote_url_bytes).map_err(|_| <Error<T>>::HttpFetching01Error)?;
++
++        debug::info!("sending request to <01>cryptocompare: {}", remote_url);
++
++        // Initiate an external HTTP GET request. This is using high-level wrappers from `sp_runtime`.
++        let request = rt_offchain::http::Request::get(remote_url);
++
++        // Keeping the offchain worker execution time reasonable, so limiting the call to be within 3s.
++        let timeout = sp_io::offchain::timestamp().add(rt_offchain::Duration::from_millis(3000));
++
++        // For github API request, we also need to specify `user-agent` in http request header.
++        //   See: https://developer.github.com/v3/#user-agent-required
++        let pending = request
++            //.add_header(
++            //    "User-Agent",
++            //    str::from_utf8(&user_agent).map_err(|_| <Error<T>>::HttpFetching01Error)?,
++            //)
++            .deadline(timeout) // Setting the timeout time
++            .send() // Sending the request out by the host
++            .map_err(|_| <Error<T>>::HttpFetching01Error)?;
++
++        // By default, the http request is async from the runtime perspective. So we are asking the
++        //   runtime to wait here.
++        // The returning value here is a `Result` of `Result`, so we are unwrapping it twice by two `?`
++        //   ref: https://substrate.dev/rustdocs/v2.0.0-rc2/sp_runtime/offchain/http/struct.PendingRequest.html#method.try_wait
++        let response = pending
++            .try_wait(timeout)
++            .map_err(|_| <Error<T>>::HttpFetching01Error)?
++            .map_err(|_| <Error<T>>::HttpFetching01Error)?;
++
++        if response.code != 200 {
++            debug::error!("Unexpected http request from <01>cryptocompare status code: {}", response.code);
++            return Err(<Error<T>>::HttpFetching01Error);
++        }
++
++        // Next we fully read the response body and collect it to a vector of bytes.
++        Ok(response.body().collect::<Vec<u8>>())
++    }
++
++    fn parse_eth_price_01_cryptocompare_resp(resp_bytes : Vec<u8>) -> Result<ETHPriceInfo01CC, Error<T>> {
++        let resp_str = str::from_utf8(&resp_bytes).map_err(|_| <Error<T>>::HttpFetching01Error)?;
++        let eth_info: ETHPriceInfo01CC =
++            serde_json::from_str(&resp_str).map_err(|_| <Error<T>>::HttpFetching01Error)?;
++        Ok(eth_info)
++    }
++
++    fn fetch_from_remote_02_coinmarketcap() -> Result<Vec<u8>, Error<T>> {
++        let remote_url_bytes = HTTP_REMOTE_02_COINMARKETCAP_REQUEST_BYTES.to_vec();
++        let cmc_pro_api_key = HTTP_HEADER_02_COINMARKETCAP_API_KEY_BYTES.to_vec();
++        let remote_url =
++            str::from_utf8(&remote_url_bytes).map_err(|_| <Error<T>>::HttpFetching02Error)?;
++
++        debug::info!("sending request to <02>coinmarketcap: {}", remote_url);
++
++        // Initiate an external HTTP GET request. This is using high-level wrappers from `sp_runtime`.
++        let request = rt_offchain::http::Request::get(remote_url);
++
++        // Keeping the offchain worker execution time reasonable, so limiting the call to be within 3s.
++        let timeout = sp_io::offchain::timestamp().add(rt_offchain::Duration::from_millis(3000));
++
++        // For github API request, we also need to specify `user-agent` in http request header.
++        //   See: https://developer.github.com/v3/#user-agent-required
++        let pending = request
++            .add_header(
++                "X-CMC_PRO_API_KEY",
++                str::from_utf8(&cmc_pro_api_key).map_err(|_| <Error<T>>::HttpFetching02Error)?,
++            )
++            .deadline(timeout) // Setting the timeout time
++            .send() // Sending the request out by the host
++            .map_err(|_| <Error<T>>::HttpFetching02Error)?;
++
++        // By default, the http request is async from the runtime perspective. So we are asking the
++        //   runtime to wait here.
++        // The returning value here is a `Result` of `Result`, so we are unwrapping it twice by two `?`
++        //   ref: https://substrate.dev/rustdocs/v2.0.0-rc2/sp_runtime/offchain/http/struct.PendingRequest.html#method.try_wait
++        let response = pending
++            .try_wait(timeout)
++            .map_err(|_| <Error<T>>::HttpFetching02Error)?
++            .map_err(|_| <Error<T>>::HttpFetching02Error)?;
++
++        if response.code != 200 {
++            debug::error!("Unexpected http request from <02>coinmarketcap status code: {}", response.code);
++            return Err(<Error<T>>::HttpFetching02Error);
++        }
++
++        // Next we fully read the response body and collect it to a vector of bytes.
++        Ok(response.body().collect::<Vec<u8>>())
++    }
++
++    fn parse_eth_price_02_coinmarketcap_resp(resp_bytes : Vec<u8>) -> Result<ETHPriceInfo02CMC, Error<T>> {
++        let resp_str = str::from_utf8(&resp_bytes).map_err(|_| <Error<T>>::HttpFetching02Error)?;
++        let eth_info: ETHPriceInfo02CMC =
++            serde_json::from_str(&resp_str).map_err(|_| <Error<T>>::HttpFetching02Error)?;
++        Ok(eth_info)
++    }
+ }
++
+diff --git a/lesson9/substrate-node-template/pallets/template/src/mock.rs b/lesson9/substrate-node-template/pallets/template/src/mock.rs
+index 4eed0e1..c7256eb 100644
+--- a/lesson9/substrate-node-template/pallets/template/src/mock.rs
++++ b/lesson9/substrate-node-template/pallets/template/src/mock.rs
+@@ -1,60 +1,60 @@
+-// Creating mock runtime here
++// // Creating mock runtime here
+ 
+-use crate::{Module, Trait};
+-use sp_core::H256;
+-use frame_support::{impl_outer_origin, parameter_types, weights::Weight};
+-use sp_runtime::{
+-	traits::{BlakeTwo256, IdentityLookup}, testing::Header, Perbill,
+-};
+-use frame_system as system;
++// use crate::{Module, Trait};
++// use sp_core::H256;
++// use frame_support::{impl_outer_origin, parameter_types, weights::Weight};
++// use sp_runtime::{
++// 	traits::{BlakeTwo256, IdentityLookup}, testing::Header, Perbill,
++// };
++// use frame_system as system;
+ 
+-impl_outer_origin! {
+-	pub enum Origin for Test {}
+-}
++// impl_outer_origin! {
++// 	pub enum Origin for Test {}
++// }
+ 
+-// For testing the pallet, we construct most of a mock runtime. This means
+-// first constructing a configuration type (`Test`) which `impl`s each of the
+-// configuration traits of pallets we want to use.
+-#[derive(Clone, Eq, PartialEq)]
+-pub struct Test;
+-parameter_types! {
+-	pub const BlockHashCount: u64 = 250;
+-	pub const MaximumBlockWeight: Weight = 1024;
+-	pub const MaximumBlockLength: u32 = 2 * 1024;
+-	pub const AvailableBlockRatio: Perbill = Perbill::from_percent(75);
+-}
+-impl system::Trait for Test {
+-	type Origin = Origin;
+-	type Call = ();
+-	type Index = u64;
+-	type BlockNumber = u64;
+-	type Hash = H256;
+-	type Hashing = BlakeTwo256;
+-	type AccountId = u64;
+-	type Lookup = IdentityLookup<Self::AccountId>;
+-	type Header = Header;
+-	type Event = ();
+-	type BlockHashCount = BlockHashCount;
+-	type MaximumBlockWeight = MaximumBlockWeight;
+-	type DbWeight = ();
+-	type BlockExecutionWeight = ();
+-	type ExtrinsicBaseWeight = ();
+-	type MaximumExtrinsicWeight = MaximumBlockWeight;
+-	type MaximumBlockLength = MaximumBlockLength;
+-	type AvailableBlockRatio = AvailableBlockRatio;
+-	type Version = ();
+-	type ModuleToIndex = ();
+-	type AccountData = ();
+-	type OnNewAccount = ();
+-	type OnKilledAccount = ();
+-}
+-impl Trait for Test {
+-	type Event = ();
+-}
+-pub type TemplateModule = Module<Test>;
++// // For testing the pallet, we construct most of a mock runtime. This means
++// // first constructing a configuration type (`Test`) which `impl`s each of the
++// // configuration traits of pallets we want to use.
++// #[derive(Clone, Eq, PartialEq)]
++// pub struct Test;
++// parameter_types! {
++// 	pub const BlockHashCount: u64 = 250;
++// 	pub const MaximumBlockWeight: Weight = 1024;
++// 	pub const MaximumBlockLength: u32 = 2 * 1024;
++// 	pub const AvailableBlockRatio: Perbill = Perbill::from_percent(75);
++// }
++// impl system::Trait for Test {
++// 	type Origin = Origin;
++// 	type Call = ();
++// 	type Index = u64;
++// 	type BlockNumber = u64;
++// 	type Hash = H256;
++// 	type Hashing = BlakeTwo256;
++// 	type AccountId = u64;
++// 	type Lookup = IdentityLookup<Self::AccountId>;
++// 	type Header = Header;
++// 	type Event = ();
++// 	type BlockHashCount = BlockHashCount;
++// 	type MaximumBlockWeight = MaximumBlockWeight;
++// 	type DbWeight = ();
++// 	type BlockExecutionWeight = ();
++// 	type ExtrinsicBaseWeight = ();
++// 	type MaximumExtrinsicWeight = MaximumBlockWeight;
++// 	type MaximumBlockLength = MaximumBlockLength;
++// 	type AvailableBlockRatio = AvailableBlockRatio;
++// 	type Version = ();
++// 	type ModuleToIndex = ();
++// 	type AccountData = ();
++// 	type OnNewAccount = ();
++// 	type OnKilledAccount = ();
++// }
++// impl Trait for Test {
++// 	type Event = ();
++// }
++// pub type TemplateModule = Module<Test>;
+ 
+-// This function basically just builds a genesis storage key/value store according to
+-// our desired mockup.
+-pub fn new_test_ext() -> sp_io::TestExternalities {
+-	system::GenesisConfig::default().build_storage::<Test>().unwrap().into()
+-}
++// // This function basically just builds a genesis storage key/value store according to
++// // our desired mockup.
++// pub fn new_test_ext() -> sp_io::TestExternalities {
++// 	system::GenesisConfig::default().build_storage::<Test>().unwrap().into()
++// }
+diff --git a/lesson9/substrate-node-template/pallets/template/src/tests.rs b/lesson9/substrate-node-template/pallets/template/src/tests.rs
+index 609ca4b..e630425 100644
+--- a/lesson9/substrate-node-template/pallets/template/src/tests.rs
++++ b/lesson9/substrate-node-template/pallets/template/src/tests.rs
+@@ -1,18 +1,176 @@
+-// Tests to be written here
++use crate::*;
++use frame_support::{assert_ok, impl_outer_event, impl_outer_origin, parameter_types};
++use parity_scale_codec::{alloc::sync::Arc, Decode};
++use parking_lot::RwLock;
++use sp_core::{
++    offchain::{
++        testing::{self, OffchainState, PoolState},
++        OffchainExt, TransactionPoolExt,
++    },
++    sr25519::{self, Signature},
++    testing::KeyStore,
++    traits::KeystoreExt,
++    H256,
++};
++use sp_io::TestExternalities;
++use sp_runtime::{
++    testing::{Header, TestXt},
++    traits::{BlakeTwo256, IdentityLookup, Verify},
++    Perbill,
++};
+ 
+-use crate::{Error, mock::*};
+-use frame_support::{assert_ok, assert_noop};
++use crate as offchain_demo;
++
++impl_outer_origin! {
++    pub enum Origin for TestRuntime where system = system {}
++}
++
++impl_outer_event! {
++    pub enum TestEvent for TestRuntime {
++        system<T>,
++        offchain_demo<T>,
++    }
++}
++
++#[derive(Clone, PartialEq, Eq, Debug)]
++pub struct TestRuntime;
++
++parameter_types! {
++    pub const BlockHashCount: u64 = 250;
++    pub const MaximumBlockWeight: u32 = 1_000_000;
++    pub const MaximumBlockLength: u32 = 10 * 1_000_000;
++    pub const AvailableBlockRatio: Perbill = Perbill::one();
++}
++
++// The TestRuntime implements two pallet/frame traits: system, and simple_event
++impl system::Trait for TestRuntime {
++    type Origin = Origin;
++    type Index = u64;
++    type Call = ();
++    type BlockNumber = u64;
++    type Hash = H256;
++    type Hashing = BlakeTwo256;
++    type AccountId = sr25519::Public;
++    type Lookup = IdentityLookup<Self::AccountId>;
++    type Header = Header;
++    type Event = TestEvent;
++    type BlockHashCount = BlockHashCount;
++    type MaximumBlockWeight = MaximumBlockWeight;
++    type DbWeight = ();
++    type BlockExecutionWeight = ();
++    type ExtrinsicBaseWeight = ();
++    type MaximumExtrinsicWeight = MaximumBlockWeight;
++    type MaximumBlockLength = MaximumBlockLength;
++    type AvailableBlockRatio = AvailableBlockRatio;
++    type Version = ();
++    type ModuleToIndex = ();
++    type AccountData = ();
++    type OnNewAccount = ();
++    type OnKilledAccount = ();
++}
++
++// --- mocking offchain-demo trait
++
++type TestExtrinsic = TestXt<Call<TestRuntime>, ()>;
++
++//parameter_types! {
++//    pub const UnsignedPriority: u64 = 100;
++//}
++
++impl Trait for TestRuntime {
++    type AuthorityId = crypto::TestAuthId;
++    type Call = Call<TestRuntime>;
++    type Event = TestEvent;
++    //type UnsignedPriority = UnsignedPriority;
++}
++
++impl<LocalCall> system::offchain::CreateSignedTransaction<LocalCall> for TestRuntime
++where
++    Call<TestRuntime>: From<LocalCall>,
++{
++    fn create_transaction<C: frame_system::offchain::AppCrypto<Self::Public, Self::Signature>>(
++        call: Call<TestRuntime>,
++        _public: <Signature as Verify>::Signer,
++        _account: <TestRuntime as system::Trait>::AccountId,
++        index: <TestRuntime as system::Trait>::Index,
++    ) -> Option<(
++    Call<TestRuntime>,
++    <TestExtrinsic as sp_runtime::traits::Extrinsic>::SignaturePayload,
++    )> {
++        Some((call, (index, ())))
++    }
++}
++
++impl frame_system::offchain::SigningTypes for TestRuntime {
++    type Public = <Signature as Verify>::Signer;
++    type Signature = Signature;
++}
++
++impl<C> frame_system::offchain::SendTransactionTypes<C> for TestRuntime
++where
++    Call<TestRuntime>: From<C>,
++{
++    type OverarchingCall = Call<TestRuntime>;
++    type Extrinsic = TestExtrinsic;
++}
++
++pub type System = system::Module<TestRuntime>;
++pub type OffchainDemo = Module<TestRuntime>;
++
++pub struct ExtBuilder;
++
++impl ExtBuilder {
++    pub fn build() -> (
++        TestExternalities,
++        Arc<RwLock<PoolState>>,
++        Arc<RwLock<OffchainState>>,
++    ) {
++        const PHRASE: &str =
++            "expire stage crawl shell boss any story swamp skull yellow bamboo copy";
++
++        let (offchain, offchain_state) = testing::TestOffchainExt::new();
++        let (pool, pool_state) = testing::TestTransactionPoolExt::new();
++        let keystore = KeyStore::new();
++        keystore
++            .write()
++            .sr25519_generate_new(KEY_TYPE, Some(&format!("{}/hunter1", PHRASE)))
++            .unwrap();
++
++        let storage = system::GenesisConfig::default()
++            .build_storage::<TestRuntime>()
++            .unwrap();
++
++        let mut t = TestExternalities::from(storage);
++        t.register_extension(OffchainExt::new(offchain));
++        t.register_extension(TransactionPoolExt::new(pool));
++        t.register_extension(KeystoreExt(keystore));
++        t.execute_with(|| System::set_block_number(1));
++        (t, pool_state, offchain_state)
++    }
++}
+ 
+ #[test]
+ fn test_onchain() {
+-	new_test_ext().execute_with(|| {
+-		// Test onchain logic here
+-	});
++    let (mut t, _, _) = ExtBuilder::build();
++    t.execute_with(|| {
++        let price = 123;
++        let acct: <TestRuntime as system::Trait>::AccountId = Default::default();
++        assert_ok!(OffchainDemo::submit_price(
++                Origin::signed(acct),
++                price
++        ));
++        assert_eq!(<Prices>::get(), vec![price]);
++
++        let price2 = 345;
++        assert_ok!(OffchainDemo::submit_price(
++                Origin::signed(acct),
++                price2
++        ));
++        assert_eq!(<Prices>::get(), vec![price, price2]);
++    });
+ }
+ 
+ #[test]
+ fn test_offchain() {
+-	new_test_ext().execute_with(|| {
+-		// Test offchain worker here
+-	});
++    
+ }
+diff --git a/lesson9/substrate-node-template/runtime/src/lib.rs b/lesson9/substrate-node-template/runtime/src/lib.rs
+index 55fa4cd..0c42042 100644
+--- a/lesson9/substrate-node-template/runtime/src/lib.rs
++++ b/lesson9/substrate-node-template/runtime/src/lib.rs
+@@ -15,7 +15,7 @@ use sp_runtime::{
+ 	transaction_validity::{TransactionValidity, TransactionSource},
+ };
+ use sp_runtime::traits::{
+-	BlakeTwo256, Block as BlockT, IdentityLookup, Verify, IdentifyAccount, NumberFor, Saturating,
++	self as traits, StaticLookup, BlakeTwo256, Block as BlockT, IdentityLookup, Verify, IdentifyAccount, NumberFor, Saturating,
+ };
+ use sp_api::impl_runtime_apis;
+ use sp_consensus_aura::sr25519::AuthorityId as AuraId;
+@@ -24,6 +24,8 @@ use grandpa::fg_primitives;
+ use sp_version::RuntimeVersion;
+ #[cfg(feature = "std")]
+ use sp_version::NativeVersion;
++use template::crypto::AuthorityId as OcwPublic;
++use codec::Encode;
+ 
+ // A few exports that help ease life for downstream crates.
+ #[cfg(any(feature = "std", test))]
+@@ -32,7 +34,7 @@ pub use timestamp::Call as TimestampCall;
+ pub use balances::Call as BalancesCall;
+ pub use sp_runtime::{Permill, Perbill};
+ pub use frame_support::{
+-	construct_runtime, parameter_types, StorageValue,
++	construct_runtime, parameter_types, StorageValue, debug,
+ 	traits::{KeyOwnerProofSystem, Randomness},
+ 	weights::{
+ 		Weight, IdentityFee,
+@@ -252,9 +254,78 @@ impl sudo::Trait for Runtime {
+ 	type Call = Call;
+ }
+ 
++impl<C> system::offchain::SendTransactionTypes<C> for Runtime where
++Call: From<C>,
++{
++    type OverarchingCall = Call;
++    type Extrinsic = UncheckedExtrinsic;
++}
++
++impl system::offchain::SigningTypes for Runtime {
++    type Public = <Signature as traits::Verify>::Signer;
++    type Signature = Signature;
++}
++
++pub struct OcwAuthorityId;
++impl system::offchain::AppCrypto<<Signature as Verify>::Signer, Signature> for OcwAuthorityId {
++    type RuntimeAppPublic = OcwPublic;
++    type GenericSignature = sp_core::sr25519::Signature;
++    type GenericPublic = sp_core::sr25519::Public;
++}
++
++/// The payload being signed in transactions.
++pub type SignedPayload = generic::SignedPayload<Call, SignedExtra>;
++
++impl<LocalCall> system::offchain::CreateSignedTransaction<LocalCall> for Runtime where
++Call: From<LocalCall>,
++{
++    fn create_transaction<C: system::offchain::AppCrypto<Self::Public, Self::Signature>>(
++        call: Call,
++        public: <Signature as traits::Verify>::Signer,
++        account: AccountId,
++        nonce: Index,
++    ) -> Option<(Call, <UncheckedExtrinsic as traits::Extrinsic>::SignaturePayload)> {
++        // take the biggest period possible.
++        let period = BlockHashCount::get()
++            .checked_next_power_of_two()
++            .map(|c| c / 2)
++            .unwrap_or(2) as u64;
++        let current_block = (System::block_number() as u64)
++            // The `System::block_number` is initialized with `n+1`,
++            // so the actual block number is `n`.
++            .saturating_sub(1);
++        let tip = 0;
++        let extra: SignedExtra = (
++            system::CheckSpecVersion::<Runtime>::new(),
++            system::CheckTxVersion::<Runtime>::new(),
++            system::CheckGenesis::<Runtime>::new(),
++            system::CheckEra::<Runtime>::from(generic::Era::mortal(period, current_block)),
++            system::CheckNonce::<Runtime>::from(nonce),
++            system::CheckWeight::<Runtime>::new(),
++            transaction_payment::ChargeTransactionPayment::<Runtime>::from(tip),
++        );
++        let raw_payload = SignedPayload::new(call, extra).map_err(|e| {
++            debug::warn!("Unable to create signed payload: {:?}", e);
++        }).ok()?;
++        let signature = raw_payload.using_encoded(|payload| {
++            C::sign(payload, public)
++        })?;
++        let address = IdentityLookup::<AccountId>::unlookup(account);
++        let (call, extra, _) = raw_payload.deconstruct();
++        Some((call, (address, signature.into(), extra)))
++    }
++}
++
++parameter_types! {
++    pub const UnsignedPriority: u64 = 100;
++}
++
++
+ /// Used for the module template in `./template.rs`
+ impl template::Trait for Runtime {
+-	type Event = Event;
++    type AuthorityId = OcwAuthorityId;
++    type Event = Event;
++    type Call = Call;
+ }
+ 
+ construct_runtime!(
